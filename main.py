@@ -120,7 +120,6 @@ def player_turn():
             # Enemy anim
             display_enemy(screen,enemy,rect)
             if selected == 'f':
-                print(damage)
                 diff = clock.tick_busy_loop()
                 if nmb_hit == 1:
                     damage += diff * player.info["at"]
@@ -175,7 +174,6 @@ def player_turn():
                     p = display_glove(screen,enemy,5,p)
                     if p > 16 :
                         glove_t[4] = 0
-                print(i,t,g,k,p)
             # Misc
             player.update_stats()
             sort_inv()
