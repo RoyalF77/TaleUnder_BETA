@@ -154,11 +154,10 @@ while start_lock:
     if window_quit():
         start_lock = False
         Emergency_Stop = True
-    else:
-        display_StartScreen(screen)
-        start_lock = waiting_room()
-        clock.tick(120)
-        pygame.display.update()
+    display_StartScreen(screen)
+    start_lock = waiting_room()
+    clock.tick(120)
+    pygame.display.update()
 
 name_lock = Emergency_Stop
 
