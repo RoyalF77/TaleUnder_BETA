@@ -45,11 +45,11 @@ def display(surface,text,font,pos,color,limit=500):
     surface.blit(render,rect)
     return render, rect
 
-def basics(screen,p=None,clock=None,elem=None,selec=None):
+def basics(screen,info):
     """
     Display Debugg Text
     """
-    display(screen,f"{p.rect,clock,elem,selec}",font,(0,0), "white")
+    display(screen,f"{info}",font,(0,0), "white")
 
 background1 = pygame.image.load("sprites/ui/battle_back/battle_0.png").convert_alpha()
 background1 = pygame.transform.scale_by(background1,1.5)
@@ -213,6 +213,8 @@ arrow_down = pygame.image.load("sprites/ui/arrows/arrow_1.png")
 arrow_down = pygame.transform.scale_by(arrow_down,3)
 
 def display_menu_arrows(screen,box,up,down):
+    global i
+    i = 0
     L,l = box.size
     x,y = box.topleft
     x += L*0.92
@@ -263,3 +265,65 @@ def display_mercy(screen,box,enemy,elem):
         if elem-3 < i and i <= elem:
             display(screen,f"* {el}",font35,(x+75,y), "white")
             y += 80
+
+glove_sheet = pygame.image.load("sprites/ui/Glove_Attack_spritesheet.png").convert_alpha()
+glove_sheet = pygame.transform.scale_by(glove_sheet,2)
+i = 0
+def display_glove(screen,enemy,img,nmb):
+    xg,yg = 47*2,40*2
+    img = pygame.Surface((xg,yg),pygame.SRCALPHA).convert_alpha()
+
+    if i > 16:
+        i = 0
+    elif i > 14 :
+        img.blit(glove_sheet,(0,0),(0,yg*7,xg,yg))
+    elif i > 12:
+        img.blit(glove_sheet,(0,0),(0,yg*6,xg,yg))
+    elif i > 10 :
+        img.blit(glove_sheet,(0,0),(0,yg*5,xg,yg))
+    elif i > 8 :
+        img.blit(glove_sheet,(0,0),(0,yg*4,xg,yg))
+    elif i > 6:
+        img.blit(glove_sheet,(0,0),(0,yg*3,xg,yg))
+    elif i > 4:
+        img.blit(glove_sheet,(0,0),(0,yg*2,xg,yg))
+    elif i > 2:
+        img.blit(glove_sheet,(0,0),(0,yg,xg,yg))
+    elif i > 0:
+        img.blit(glove_sheet,(0,0),(0,0,xg,yg))
+    i += 0.005
+
+    x,y = enemy.rect.center
+    if type(img) == pygame.Surface:
+        if nmb == 1:
+            screen.blit(img,(x-50,y))
+        elif nmb == 2:
+            screen.blit(img,(x-100,y-100))
+        elif nmb == 3:
+            screen.blit(img,(x-25,y-150))
+        elif nmb == 4:
+            screen.blit(img,(x-70,y))
+        elif nmb == 5:
+            screen.blit(img,(x-10,y-50))
+        else:
+            screen.blit(img,(x-10,y-50))
+
+def display_attack(screen,box):
+    x,y = box.topleft
+    display(screen,"Press Z ! ",font35,(x+30,y+20), "white",40)
+
+def display_attack_damage(screen,box,dmg):
+    x,y = box.topleft
+    display(screen,f"You dealt {dmg} damages !",font35,(x+30,y+20), "white",40)
+
+def display_act_txt(screen,box,enemy,cursor):
+    x,y = box.topleft
+    display(screen,f"{enemy.act_txt[cursor]}",font35,(x+30,y+20), "white",40)
+
+def display_item_txt(screen,box,player,cursor):
+    x,y = box.topleft
+    display(screen,f"You hate the {player.inv[cursor]['name']}, you recover {player.inv[cursor]['hp_give']} HP",font35,(x+30,y+20), "white",50)
+
+def display_mercy_txt(screen,box,enemy,cursor):
+    x,y = box.topleft
+    display(screen,f"{enemy.mercy_txt[cursor]}",font35,(x+30,y+20), "white",40)

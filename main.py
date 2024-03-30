@@ -31,15 +31,19 @@ def player_turn():
     buttonstab = [1,0,0,0]
     selected = None
     last_tab = [0,0,0,0]
+    action_pressed = False
+    nmb_hit = 0
+    cursor = 0
+    damage = 0
     while combat_lock:
             # Print on the screen the static background
-            if selected != None and selected not in ['f','m']:
+            if not action_pressed and selected != None and selected not in ['f','m']:
                 screen.blit(line_all,(0,0))
-            elif selected == 'm':
+            elif not action_pressed and selected == 'm':
                 screen.blit(line_mercy,(0,0))
             else:
                 screen.blit(img,(0,0))
-
+            
             if selected == None:
                 # Selection of the menu
                 combat_lock, buttonstab,selected = pturn_events(buttonstab,player,enemy)
@@ -49,40 +53,106 @@ def player_turn():
                 if buttonstab != [0,0,0,0]:
                     last_tab = buttonstab
                     buttonstab = [0,0,0,0]
-                combat_lock,buttonstab,selected,arrow_coord,elem = in_menu(buttonstab,selected,rect,player,enemy)
-                # debug
-                basics(screen,player,clock,elem,selected)
-                if selected == None:
-                    buttonstab = last_tab
-                    last_tab = [0,0,0,0]
-
-                elif selected == 'f':
-                    display_fight(screen,rect,player)
-
-                elif selected == 'a':
-                    display_act(screen,rect,enemy,elem)
-
-                elif selected == 'i':
-                    display_item(screen,rect,player,elem)
-
-                elif selected == 'm':
-                    display_mercy(screen,rect,enemy,elem)
+                
+                if action_pressed:
                     
-                display_arrow(screen,arrow_coord)
+                    if selected == 'f':
+                        combat_lock, when_att = fight_button_pressed()
+                        basics(screen,[clock,selected,action_pressed,when_att,nmb_hit])
+                        if nmb_hit <= 10:
+                            display_attack(screen,rect)
+                        if when_att:
+                            nmb_hit += 1
+
+                    if selected == 'a':
+                        combat_lock = not window_quit()
+                        display_act_txt(screen,rect,enemy,cursor)
+                        if nmb_hit > 10:
+                            return [selected,cursor]
+                        nmb_hit += 0.1
+                    
+                    if selected == 'i':
+                        
+                        combat_lock = not window_quit()
+                        display_item_txt(screen,rect,player,cursor)
+                        if nmb_hit == 0:
+                            recover_hp(player,player.inv[cursor]['hp_give'])
+                        if nmb_hit > 10:
+                            return [selected]
+                        nmb_hit += 0.1
+
+                    if selected == 'm':
+                        combat_lock = not window_quit()
+                        display_mercy_txt(screen,rect,enemy,cursor)
+                        if nmb_hit > 10:
+                            return [selected,cursor]
+                        nmb_hit += 0.1
+                else:
+                    combat_lock,buttonstab,selected,arrow_coord,elem,action_pressed,cursor = in_menu(buttonstab,selected,rect,player,enemy)
+                    basics(screen,[clock,selected,[action_pressed],elem,cursor,player.info["current_hp"]])
+                    if selected == None:
+                        buttonstab = last_tab
+                        last_tab = [0,0,0,0]
+
+                    elif selected == 'f':
+                        display_fight(screen,rect,player)
+
+                    elif selected == 'a':
+                        display_act(screen,rect,enemy,elem)
+
+                    elif selected == 'i':
+                        display_item(screen,rect,player,elem)
+
+                    elif selected == 'm':
+                        display_mercy(screen,rect,enemy,elem)
+                    
+                    display_arrow(screen,arrow_coord)
 
             
             # Buttons
             buttons(screen,rect,buttonstab)
             # Hp bar, name...
             fight_elements(screen,player,rect)
+            # attack_anim(screen,rect,enemy,True)
+            
             # Enemy anim
             display_enemy(screen,enemy,rect)
+            if selected == 'f':
+                print(damage)
+                diff = clock.tick_busy_loop()
+                if nmb_hit == 1:
+                    damage += diff * player.info["at"]
+                    nmb_hit += 1
 
-            
+                if nmb_hit == 3:
+                    damage += diff * player.info["at"]
+                    nmb_hit += 1
+
+                if nmb_hit == 5:
+                    damage += diff * player.info["at"]
+                    nmb_hit += 1
+
+                if nmb_hit == 7:
+                    damage += diff * player.info["at"]
+                    nmb_hit += 1
+
+                if nmb_hit == 9:
+                    damage += diff * player.info["at"]
+                    damage = damage // (enemy.info["df"]*2)
+                    nmb_hit += 1
+
+                if nmb_hit > 9:
+                    nmb_hit += 1
+                    display_attack_damage(screen,rect,damage)
+                    
+                    if nmb_hit >= 100:
+                        enemy.info['hp'] -= damage
+                        return
+
             # Misc
             player.update_stats()
             sort_inv()
-            clock.tick(120)
+            clock.tick(60)
             
             pygame.display.update()
 
@@ -98,6 +168,7 @@ def enemy_turn(soul):
     surfrect = surf.get_rect(center = rect.center)
     # Init buttons
     buttons(img,rect,[0,0,0,0])
+    player.rect.center = rect.center
 
     # Begin the loop
     combat_lock = True
@@ -116,7 +187,7 @@ def enemy_turn(soul):
             # draw the soul
             draw_player(screen,player)
             # debug
-            basics(screen,player,clock)
+            basics(screen,[player,clock])
             # blue/red soul
             soul = modif_soul(soul)
             # Stop condition
@@ -136,10 +207,10 @@ pygame.display.set_icon(ico)
 
 info = {}
 info["name"] = "Frisk"
-info["xp"] = 99999
-info["level"] = 1
+info["xp"] = 0
+info["level"] = 5
 info["hp"] = hp_system[info["level"]]
-info["current_hp"] = info["hp"]
+info["current_hp"] = info["hp"]//2
 info["at"] = at_system[info["level"]]
 info["df"] = df_system[info["level"]]
 
@@ -193,8 +264,8 @@ while overworld_lock:
         if monster_combat:
             player_turn()
             monster_combat = False
-        # player_turn()
-        enemy_turn(soul)
+        player_turn()
+        # enemy_turn(soul)
         overworld_lock = False
         
 pygame.quit()

@@ -14,7 +14,7 @@ class Sans:
             "desc" : "* Sans - 1 ATK 1 DEF\n* The easiest enemy.\n* Can only deal 1 damage.",
             "hp" : 40,
             "at" : 1,
-            "df" : 1,
+            "df" : 2,
             "xp_reward" : 0,
             "gold_reward" : 0,
             "KR" : True
@@ -56,6 +56,7 @@ class Sans:
             img.blit(self.sheet,(0,0),(0,y*11,x,y))
         x,y = boxrect.midtop
         rect = img.get_rect(midbottom = (x+20,y-10))
+        self.rect = rect
         return img,rect
     
     def anim_hand_up(self):
@@ -322,6 +323,21 @@ for i in range(1,21):
 #Player Inventory
 player_inventory = [Butterscotch_Pie,Spider_Cider,Snowman_Piece,Spider_Cider,Spider_Donut,Bandage,Snail_Pie]
 sort_inv()
+
+def recover_hp(player,hp):
+    if type(hp) == str:
+        if hp == 'ALL':
+            player.info["current_hp"] = player.info["hp"]
+        if hp == 'All-1':
+            player.info["current_hp"] = player.info["hp"] -1
+    else:
+
+        temp = player.info["current_hp"] + hp
+        if temp >= player.info["hp"]:
+            player.info["current_hp"] = player.info["hp"]
+        else:
+            player.info["current_hp"] = temp
+
 
 red_soul = pygame.image.load("sprites/Souls/red_soul.png").convert_alpha()
 blue_soul = pygame.image.load("sprites/Souls/blue_soul.png").convert_alpha()
