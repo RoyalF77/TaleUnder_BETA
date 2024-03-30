@@ -51,9 +51,9 @@ def basics(screen,p=None,clock=None,elem=None,selec=None):
     """
     display(screen,f"{p.rect,clock,elem,selec}",font,(0,0), "white")
 
-background1 = pygame.image.load("sprites/ui/battle_back/battle_0.png")
+background1 = pygame.image.load("sprites/ui/battle_back/battle_0.png").convert_alpha()
 background1 = pygame.transform.scale_by(background1,1.5)
-background2 = pygame.image.load("sprites/ui/battle_back/battle_1.png")
+background2 = pygame.image.load("sprites/ui/battle_back/battle_1.png").convert_alpha()
 background2 = pygame.transform.scale_by(background2,1.5)
 
 def display_background(screen,type=1):
@@ -99,14 +99,14 @@ def boxfight(screen,longueur,largeur,coord,colors="black"):
     screen.blit(boxsurf,(x-longueur//2,y-largeur//2))
     return boxsurf,box
 
-fight = pygame.image.load("sprites/Buttons/fight.png")
-fight_s = pygame.image.load("sprites/Buttons/fight_selected.png")
-act = pygame.image.load("sprites/Buttons/act.png")
-act_s = pygame.image.load("sprites/Buttons/act_selected.png")
-items = pygame.image.load("sprites/Buttons/item.png")
-items_s = pygame.image.load("sprites/Buttons/item_selected.png")
-mercy = pygame.image.load("sprites/Buttons/mercy.png")
-mercy_s = pygame.image.load("sprites/Buttons/mercy_selected.png")
+fight = pygame.image.load("sprites/Buttons/fight.png").convert_alpha()
+fight_s = pygame.image.load("sprites/Buttons/fight_selected.png").convert_alpha()
+act = pygame.image.load("sprites/Buttons/act.png").convert_alpha()
+act_s = pygame.image.load("sprites/Buttons/act_selected.png").convert_alpha()
+items = pygame.image.load("sprites/Buttons/item.png").convert_alpha()
+items_s = pygame.image.load("sprites/Buttons/item_selected.png").convert_alpha()
+mercy = pygame.image.load("sprites/Buttons/mercy.png").convert_alpha()
+mercy_s = pygame.image.load("sprites/Buttons/mercy_selected.png").convert_alpha()
 
 
 def buttons(screen,boxrect,selected=[0,0,0,0]):

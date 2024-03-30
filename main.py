@@ -1,5 +1,11 @@
 import pygame
 pygame.init()
+
+height = 824
+width = 1280
+
+screen = pygame.display.set_mode((width,height))
+
 from view import *
 from controller import *
 from model import *
@@ -127,10 +133,6 @@ Emergency_Stop = False
 ico = pygame.image.load("sprites/Souls/red_soul.png")
 pygame.display.set_caption("TaleUnder_BETA")
 pygame.display.set_icon(ico)
- 
-# Get the width and height of the window
-height = 824
-width = 1280
 
 info = {}
 info["name"] = "Frisk"
@@ -141,7 +143,7 @@ info["current_hp"] = info["hp"]
 info["at"] = at_system[info["level"]]
 info["df"] = df_system[info["level"]]
 
-screen = pygame.display.set_mode((width,height))
+
 player = Player(info,player_inventory)
 
 clock = pygame.time.Clock()
