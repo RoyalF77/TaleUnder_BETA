@@ -191,8 +191,8 @@ while overworld_lock:
         if monster_combat:
             player_turn()
             monster_combat = False
-        player_turn()
-        # enemy_turn(soul)
+        # player_turn()
+        enemy_turn(soul)
         overworld_lock = False
         
 pygame.quit()

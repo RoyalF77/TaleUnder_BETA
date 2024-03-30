@@ -324,6 +324,7 @@ player_inventory = [Butterscotch_Pie,Spider_Cider,Snowman_Piece,Spider_Cider,Spi
 sort_inv()
 
 
+
 class Player:
 
     def __init__(self,info,inventory):
@@ -334,25 +335,31 @@ class Player:
         self.speed = 3
         self.velocity = [0,0]
         self.inv = inventory
-        
+        # Souls Init
+        self.red_soul = pygame.image.load("sprites/Souls/red_soul.png").convert_alpha()
+        self.blue_soul = pygame.image.load("sprites/Souls/blue_soul.png").convert_alpha()
+        self.yellow_soul = pygame.image.load("sprites/Souls/yellow_soul.png").convert_alpha()
+        self.green_soul = pygame.image.load("sprites/Souls/green_soul.png").convert_alpha()
+        self.purple_soul = pygame.image.load("sprites/Souls/purple_soul.png").convert_alpha()
+            
     def __str__(self):
          return f"({self.img}\n{self.rect}\n{self.info})"
     
     def move(self,surface):
         self.rect.move_ip(self.velocity[0] * self.speed, self.velocity[1] * self.speed)
         self.rect.clamp_ip(surface)
-    
+
     def swap_img(self,flags):
         if flags == 'red':
-            self.img = pygame.image.load("sprites/Souls/red_soul.png").convert_alpha()
+            self.img = self.red_soul
         if flags == 'blue':
-            self.img = pygame.image.load("sprites/Souls/blue_soul.png").convert_alpha()
+            self.img = self.blue_soul
         if flags == 'yellow':
-            self.img = pygame.image.load("sprites/Souls/yellow_soul.png").convert_alpha()
+            self.img = self.yellow_soul
         if flags == 'green':
-            self.img = pygame.image.load("sprites/Souls/green_soul.png").convert_alpha()
+            self.img = self.green_soul
         if flags == 'purple':
-            self.img = pygame.image.load("sprites/Souls/purple_soul.png").convert_alpha()
+            self.img = self.purple_soul
 
     def update_stats(self):
         if self.info["level"]<20 and xp_system[self.info["level"]] <= self.info["xp"]:
