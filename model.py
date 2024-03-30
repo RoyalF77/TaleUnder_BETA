@@ -157,6 +157,7 @@ class Froggit2:
             img.blit(self.sheet,(0,0),(0,y,x,y))
         x,y = boxrect.midtop
         rect = img.get_rect(midbottom = (x,y-10))
+        self.rect = rect
         return img,rect
 
 # ITEM DATABASE

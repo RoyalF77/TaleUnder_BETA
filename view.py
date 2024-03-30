@@ -268,14 +268,12 @@ def display_mercy(screen,box,enemy,elem):
 
 glove_sheet = pygame.image.load("sprites/ui/Glove_Attack_spritesheet.png").convert_alpha()
 glove_sheet = pygame.transform.scale_by(glove_sheet,2)
-i = 0
-def display_glove(screen,enemy,img,nmb):
+glove_tab = [0,0,0,0,0]
+def display_glove(screen,enemy,nmb,i):
     xg,yg = 47*2,40*2
     img = pygame.Surface((xg,yg),pygame.SRCALPHA).convert_alpha()
 
-    if i > 16:
-        i = 0
-    elif i > 14 :
+    if i > 14 :
         img.blit(glove_sheet,(0,0),(0,yg*7,xg,yg))
     elif i > 12:
         img.blit(glove_sheet,(0,0),(0,yg*6,xg,yg))
@@ -291,22 +289,22 @@ def display_glove(screen,enemy,img,nmb):
         img.blit(glove_sheet,(0,0),(0,yg,xg,yg))
     elif i > 0:
         img.blit(glove_sheet,(0,0),(0,0,xg,yg))
-    i += 0.005
+    i += 1
 
     x,y = enemy.rect.center
     if type(img) == pygame.Surface:
         if nmb == 1:
             screen.blit(img,(x-50,y))
         elif nmb == 2:
-            screen.blit(img,(x-100,y-100))
+            screen.blit(img,(x,y-100))
         elif nmb == 3:
-            screen.blit(img,(x-25,y-150))
+            screen.blit(img,(x-100,y-150))
         elif nmb == 4:
-            screen.blit(img,(x-70,y))
+            screen.blit(img,(x-70,y+50))
         elif nmb == 5:
-            screen.blit(img,(x-10,y-50))
-        else:
-            screen.blit(img,(x-10,y-50))
+            screen.blit(img,(x-100,y-50))
+    
+    return i
 
 def display_attack(screen,box):
     x,y = box.topleft

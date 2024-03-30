@@ -35,6 +35,8 @@ def player_turn():
     nmb_hit = 0
     cursor = 0
     damage = 0
+    glove_t = [0,0,0,0,0]
+    i,t,g,k,p = 0,0,0,0,0
     while combat_lock:
             # Print on the screen the static background
             if not action_pressed and selected != None and selected not in ['f','m']:
@@ -123,23 +125,27 @@ def player_turn():
                 if nmb_hit == 1:
                     damage += diff * player.info["at"]
                     nmb_hit += 1
-
+                    glove_t[0] = 1
                 if nmb_hit == 3:
                     damage += diff * player.info["at"]
                     nmb_hit += 1
+                    glove_t[1] = 1
 
                 if nmb_hit == 5:
                     damage += diff * player.info["at"]
                     nmb_hit += 1
+                    glove_t[2] = 1
 
                 if nmb_hit == 7:
                     damage += diff * player.info["at"]
                     nmb_hit += 1
+                    glove_t[3] = 1
 
                 if nmb_hit == 9:
                     damage += diff * player.info["at"]
                     damage = damage // (enemy.info["df"]*2)
                     nmb_hit += 1
+                    glove_t[4] = 1
 
                 if nmb_hit > 9:
                     nmb_hit += 1
@@ -148,7 +154,28 @@ def player_turn():
                     if nmb_hit >= 100:
                         enemy.info['hp'] -= damage
                         return
-
+                
+                if glove_t[0]:
+                    i = display_glove(screen,enemy,1,i)
+                    if i > 16 :
+                        glove_t[0] = 0
+                if glove_t[1]:
+                    t = display_glove(screen,enemy,2,t)
+                    if t > 16 :
+                        glove_t[1] = 0
+                if glove_t[2]:
+                    g = display_glove(screen,enemy,3,g)
+                    if g > 16 :
+                        glove_t[2] = 0
+                if glove_t[3]:
+                    k = display_glove(screen,enemy,4,k)
+                    if k > 16 :
+                        glove_t[3] = 0
+                if glove_t[4]:
+                    p = display_glove(screen,enemy,5,p)
+                    if p > 16 :
+                        glove_t[4] = 0
+                print(i,t,g,k,p)
             # Misc
             player.update_stats()
             sort_inv()
