@@ -127,7 +127,7 @@ def enemy_turn(soul):
             clock.tick(120)
             pygame.display.update()
 
-Emergency_Stop = False 
+Emergency_Stop = False
 
 # Window Name and Icon
 ico = pygame.image.load("sprites/Souls/red_soul.png")
