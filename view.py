@@ -27,13 +27,13 @@ def name_pad(screen,spec,cursor,select):
             w,h = w*0.27,(h*0.4) +100*(i//7)
         if txt == '':
             if i == cursor:
-                display_letter(screen,chr(ord(Alphabet[i])-32),'orange',(w,h))
+                display_letter(screen,chr(ord(Alphabet[i])-32),'blue',(w,h))
                 letter = chr(ord(Alphabet[i])-32)
             else:
                 display_letter(screen,chr(ord(Alphabet[i])-32),'white',(w,h))
         else:
             if i == cursor:
-                display_letter(screen,Alphabet[i],'orange',(w,h))
+                display_letter(screen,Alphabet[i],'blue',(w,h))
                 letter = Alphabet[i]
             else:
                 display_letter(screen,Alphabet[i],'white',(w,h))
@@ -60,9 +60,6 @@ def selection_name(screen,spec,txt,i):
         display(screen,f"Your Name is {txt}",font,(w*0.37,h*0.45), "white",500)
 
     return False
-
-        
-
 
 def draw_player(screen,player):
     screen.blit(player.img,player.rect)
@@ -110,23 +107,15 @@ def basics(screen,info):
     """
     display(screen,f"{info}",font,(0,0), "orange")
 
-# background1 = pygame.image.load("sprites/ui/battle_back/battle_0.png").convert_alpha()
-background1 = pygame.image.load("Background.png").convert_alpha()
+background1 = pygame.image.load("sprites/ui/battle_back/Background.png").convert_alpha()
 background1 = pygame.transform.scale_by(background1,2.2)
-background2 = pygame.image.load("sprites/ui/battle_back/battle_1.png").convert_alpha()
-background2 = pygame.transform.scale_by(background2,1.5)
 
-def display_background(screen,type=1):
-    if type == 1:
-        backrect = background1.get_rect()
-        x,y = screen.get_size()
-        backrect.midbottom = (x//2,y*.6)
-        screen.blit(background1,backrect)
-    else:
-        backrect = background2.get_rect()
-        x,y = screen.get_size()
-        backrect.midbottom = (x//2,y*0.46)
-        screen.blit(background2,backrect)
+
+def display_background(screen):
+    backrect = background1.get_rect()
+    x,y = screen.get_size()
+    backrect.midbottom = (x//2,y*.6)
+    screen.blit(background1,backrect)
 
 def display_line(screen,box,nb_line):
     L,l = box.size
