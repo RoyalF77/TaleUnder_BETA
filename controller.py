@@ -14,11 +14,37 @@ def waiting_room():
         return False
     return True
 
-def name_ev():
-    pressed = pygame.key.get_pressed()
-    if pressed[pygame.K_SPACE]:
-        return False
-    return True
+Alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+stock_ancient = ""
+enter = False
+def name_ev(cursor):
+    global stock_ancient,enter
+    if cursor == 'Erase':
+        cursor = stock_ancient
+    for event in pygame.event.get(eventtype=[pygame.KEYDOWN,pygame.QUIT]):
+        if event.type == pygame.QUIT :
+            return True, False, cursor,False,enter
+        
+        if event.key == pygame.K_LEFT and cursor -1 >= 0:
+            cursor -= 1
+        elif event.key == pygame.K_RIGHT and cursor +1 < len(Alphabet):
+            cursor += 1
+        elif event.key == pygame.K_UP and cursor - 7 >= 0:
+            cursor -= 7
+        elif event.key == pygame.K_DOWN and cursor +7 < len(Alphabet):
+            cursor += 7
+        if event.key == pygame.K_z:
+            return False,True,cursor,True,enter
+        elif event.key == pygame.K_BACKSPACE:
+            stock_ancient = cursor
+            return False,True,'Erase',True,enter
+
+        if event.key == pygame.K_RETURN:
+            enter = True
+            return False,True,cursor,False,enter
+
+    return False,True,cursor,False,enter
+        
 
 def modif_soul(state):
     pressed = pygame.key.get_pressed()

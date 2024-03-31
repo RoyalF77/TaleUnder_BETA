@@ -340,7 +340,7 @@ def recover_hp(player,hp):
             player.info["current_hp"] = temp
 
 
-red_soul = pygame.image.load("sprites/Souls/red_soul.png").convert_alpha()
+red_soul = pygame.image.load("sprites/Souls/new_soul.png").convert_alpha()
 blue_soul = pygame.image.load("sprites/Souls/blue_soul.png").convert_alpha()
 yellow_soul = pygame.image.load("sprites/Souls/yellow_soul.png").convert_alpha()
 green_soul = pygame.image.load("sprites/Souls/green_soul.png").convert_alpha()
@@ -353,7 +353,7 @@ class Player:
         self.size = self.img.get_size()
         self.rect = self.img.get_rect(x=0,y=0)
         self.info = info
-        self.speed = 3
+        self.speed = 4.5
         self.velocity = [0,0]
         self.inv = inventory
         

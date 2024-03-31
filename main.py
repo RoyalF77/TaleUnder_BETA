@@ -5,7 +5,7 @@ height = 824
 width = 1280
 
 screen = pygame.display.set_mode((width,height))
-
+fps = 60
 from view import *
 from controller import *
 from model import *
@@ -16,7 +16,7 @@ def player_turn():
     # Display the color background
     img.fill((0,0,20))
     # Background
-    display_background(img,2)
+    display_background(img)
     # TextBox
     surf,rect = boxfight(img,width*0.6,height*0.3,(width*0.5,height*0.6),colors= (15,15,15))
     line_all = pygame.Surface((width,height))
@@ -28,6 +28,7 @@ def player_turn():
     display_line(line_mercy,rect,1)
     # Begin the loop
     combat_lock = True
+    stop = False
     buttonstab = [1,0,0,0]
     selected = None
     last_tab = [0,0,0,0]
@@ -48,7 +49,7 @@ def player_turn():
             
             if selected == None:
                 # Selection of the menu
-                combat_lock, buttonstab,selected = pturn_events(buttonstab,player,enemy)
+                stop, buttonstab,selected = pturn_events(buttonstab,player,enemy)
                 display_info(screen,rect,enemy)
             else:
                 # In a menu
@@ -59,39 +60,39 @@ def player_turn():
                 if action_pressed:
                     
                     if selected == 'f':
-                        combat_lock, when_att = fight_button_pressed()
-                        basics(screen,[clock,selected,action_pressed,when_att,nmb_hit])
+                        stop, when_att = fight_button_pressed()
+                        
                         if nmb_hit <= 10:
                             display_attack(screen,rect)
                         if when_att:
                             nmb_hit += 1
 
                     if selected == 'a':
-                        combat_lock = not window_quit()
+                        stop = not window_quit()
                         display_act_txt(screen,rect,enemy,cursor)
                         if nmb_hit > 10:
-                            return [selected,cursor]
+                            return True,[selected,cursor]
                         nmb_hit += 0.1
                     
                     if selected == 'i':
                         
-                        combat_lock = not window_quit()
+                        stop = not window_quit()
                         display_item_txt(screen,rect,player,cursor)
                         if nmb_hit == 0:
                             recover_hp(player,player.inv[cursor]['hp_give'])
                         if nmb_hit > 10:
-                            return [selected]
+                            return True,[selected]
                         nmb_hit += 0.1
 
                     if selected == 'm':
-                        combat_lock = not window_quit()
+                        stop = not window_quit()
                         display_mercy_txt(screen,rect,enemy,cursor)
                         if nmb_hit > 10:
-                            return [selected,cursor]
+                            return True, [selected,cursor]
                         nmb_hit += 0.1
                 else:
-                    combat_lock,buttonstab,selected,arrow_coord,elem,action_pressed,cursor = in_menu(buttonstab,selected,rect,player,enemy)
-                    basics(screen,[clock,selected,[action_pressed],elem,cursor,player.info["current_hp"]])
+                    stop,buttonstab,selected,arrow_coord,elem,action_pressed,cursor = in_menu(buttonstab,selected,rect,player,enemy)
+                    
                     if selected == None:
                         buttonstab = last_tab
                         last_tab = [0,0,0,0]
@@ -152,7 +153,7 @@ def player_turn():
                     
                     if nmb_hit >= 100:
                         enemy.info['hp'] -= damage
-                        return
+                        return True,['f']
                 
                 if glove_t[0]:
                     i = display_glove(screen,enemy,1,i)
@@ -177,9 +178,11 @@ def player_turn():
             # Misc
             player.update_stats()
             sort_inv()
-            clock.tick(60)
-            
+            clock.tick(fps)
+            basics(screen,[clock,stop])
             pygame.display.update()
+            if not stop:
+                return False,[]
 
 def enemy_turn(soul):
     # create the background static
@@ -187,7 +190,7 @@ def enemy_turn(soul):
     # Display the color background
     img.fill((0,0,20))
     # Display the green boxes
-    display_background(img,2)
+    display_background(img)
     # Init boxfight
     surf,rect = boxfight(img,width*0.4,height*0.3,(width*0.5,height*0.6))
     surfrect = surf.get_rect(center = rect.center)
@@ -212,7 +215,7 @@ def enemy_turn(soul):
             # draw the soul
             draw_player(screen,player)
             # debug
-            basics(screen,[player,clock])
+            basics(screen,[player.rect,clock])
             # blue/red soul
             soul = modif_soul(soul)
             # Stop condition
@@ -220,7 +223,7 @@ def enemy_turn(soul):
             # Misc
             player.update_stats()
             sort_inv()
-            clock.tick(120)
+            clock.tick(fps)
             pygame.display.update()
 
 Emergency_Stop = False
@@ -246,7 +249,7 @@ clock = pygame.time.Clock()
 screenrect = screen.get_rect()
 
 # Start of the Game
-start_lock = False
+start_lock = True
 while start_lock:
     screen.fill((0,0,20))
     if window_quit():
@@ -254,22 +257,25 @@ while start_lock:
         Emergency_Stop = True
     display_StartScreen(screen)
     start_lock = waiting_room()
-    clock.tick(120)
+    clock.tick(fps)
     pygame.display.update()
 
-name_lock = Emergency_Stop
-
+name_lock = not Emergency_Stop
+cursor = 0
+txt = ''
+ind = 0
 while name_lock:
     screen.fill((0,0,20))
-    if window_quit():
-        name_lock = False
-        Emergency_Stop = True
-        
+    Emergency_Stop,name_lock,cursor,select,enter = name_ev(cursor)
+    if enter:
+        Emergency_Stop = selection_name(screen,(width,height),txt,ind)
+        ind += 1
+        if ind > 140:
+            name_lock = False
     else:
-        name_pad(screen,(width,height))
-        name_lock = name_ev()
-        clock.tick(120)
-        pygame.display.update()
+        txt = name_pad(screen,(width,height),cursor,select)
+    clock.tick(fps)
+    pygame.display.update()
 
 cube_box = boxfight(screen,width*0.2,height*0.3,(width*0.5,height*0.6))
 large_box = boxfight(screen,width*0.4,height*0.3,(width*0.5,height*0.6))
@@ -289,8 +295,12 @@ while overworld_lock:
         if monster_combat:
             player_turn()
             monster_combat = False
-        player_turn()
-        # enemy_turn(soul)
+
+        overworld_lock,info = player_turn()
+
+        if overworld_lock:
+            overworld_lock = enemy_turn(soul)
+
         overworld_lock = False
         
 pygame.quit()

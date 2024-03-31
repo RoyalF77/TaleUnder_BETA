@@ -6,14 +6,73 @@ font = pygame.font.Font("8bitoperator_jve.ttf",fontsize)
 
 def display_StartScreen(screen):
     x,y = screen.get_size()
-    logo = pygame.image.load("sprites/ui/TaleUnder_Cover.png").convert_alpha()
+    logo = pygame.image.load("sprites/NCover.png").convert_alpha()
     logorect = logo.get_rect(center=(x//2,y//2))
     screen.blit(logo,logorect)
     xl,yl = logorect.bottomleft
     display(screen,"Press z to begin your journey",font,(xl+105,yl+20), "white",500)
 
+Alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+txt = ''
+def name_pad(screen,spec,cursor,select):
+    global txt
+    letter = ''
+    w,h = spec
+
+    font = pygame.font.Font("8bitoperator_jve.ttf",40)
+    display(screen,"Name the fallen human.",font,(w*0.37,h*0.2), "white",500)
+    for i in range(len(Alphabet)):
+        if i % 7 == 0:
+            w,h = spec
+            w,h = w*0.27,(h*0.4) +100*(i//7)
+        if txt == '':
+            if i == cursor:
+                display_letter(screen,chr(ord(Alphabet[i])-32),'orange',(w,h))
+                letter = chr(ord(Alphabet[i])-32)
+            else:
+                display_letter(screen,chr(ord(Alphabet[i])-32),'white',(w,h))
+        else:
+            if i == cursor:
+                display_letter(screen,Alphabet[i],'orange',(w,h))
+                letter = Alphabet[i]
+            else:
+                display_letter(screen,Alphabet[i],'white',(w,h))
+        w += 100
+
+    w,h = spec
+    if select:
+        if cursor == 'Erase':
+            txt = txt[:-1]
+        elif type(cursor) == int:
+            txt += letter
+
+    display(screen,txt,font,(w*0.37,h*0.3), "white",500)
+    return txt
+
+def selection_name(screen,spec,txt,i):
+    if txt == 'Gaster':
+        return True
+    w,h = spec
+    font = pygame.font.Font("8bitoperator_jve.ttf",60)
+    if i > 50:
+        display(screen,"However, YOU CAN'T CHOOSE YOUR NAME =)",font,(w*0.2,h*0.45), "white",500)
+    else:
+        display(screen,f"Your Name is {txt}",font,(w*0.37,h*0.45), "white",500)
+
+    return False
+
+        
+
+
 def draw_player(screen,player):
     screen.blit(player.img,player.rect)
+
+font_namepad = pygame.font.Font("8bitoperator_jve.ttf",40)
+
+def display_letter(screen,txt,color,pos):
+    render = font_namepad.render(txt,True,color)
+    rect = render.get_rect(topleft = pos)
+    screen.blit(render,rect)
 
 def display(surface,text,font,pos,color,limit=500):
     """
@@ -49,10 +108,11 @@ def basics(screen,info):
     """
     Display Debugg Text
     """
-    display(screen,f"{info}",font,(0,0), "white")
+    display(screen,f"{info}",font,(0,0), "orange")
 
-background1 = pygame.image.load("sprites/ui/battle_back/battle_0.png").convert_alpha()
-background1 = pygame.transform.scale_by(background1,1.5)
+# background1 = pygame.image.load("sprites/ui/battle_back/battle_0.png").convert_alpha()
+background1 = pygame.image.load("Background.png").convert_alpha()
+background1 = pygame.transform.scale_by(background1,2.2)
 background2 = pygame.image.load("sprites/ui/battle_back/battle_1.png").convert_alpha()
 background2 = pygame.transform.scale_by(background2,1.5)
 
@@ -60,7 +120,7 @@ def display_background(screen,type=1):
     if type == 1:
         backrect = background1.get_rect()
         x,y = screen.get_size()
-        backrect.midbottom = (x//2,y//2)
+        backrect.midbottom = (x//2,y*.6)
         screen.blit(background1,backrect)
     else:
         backrect = background2.get_rect()
@@ -99,14 +159,14 @@ def boxfight(screen,longueur,largeur,coord,colors="black"):
     screen.blit(boxsurf,(x-longueur//2,y-largeur//2))
     return boxsurf,box
 
-fight = pygame.image.load("sprites/Buttons/fight.png").convert_alpha()
-fight_s = pygame.image.load("sprites/Buttons/fight_selected.png").convert_alpha()
-act = pygame.image.load("sprites/Buttons/act.png").convert_alpha()
-act_s = pygame.image.load("sprites/Buttons/act_selected.png").convert_alpha()
-items = pygame.image.load("sprites/Buttons/item.png").convert_alpha()
-items_s = pygame.image.load("sprites/Buttons/item_selected.png").convert_alpha()
-mercy = pygame.image.load("sprites/Buttons/mercy.png").convert_alpha()
-mercy_s = pygame.image.load("sprites/Buttons/mercy_selected.png").convert_alpha()
+fight = pygame.image.load("sprites/Buttons/b_f.png").convert_alpha()
+fight_s = pygame.image.load("sprites/Buttons/b_f_s.png").convert_alpha()
+act = pygame.image.load("sprites/Buttons/b_a.png").convert_alpha()
+act_s = pygame.image.load("sprites/Buttons/b_a_s.png").convert_alpha()
+items = pygame.image.load("sprites/Buttons/b_i.png").convert_alpha()
+items_s = pygame.image.load("sprites/Buttons/b_i_s.png").convert_alpha()
+mercy = pygame.image.load("sprites/Buttons/b_m.png").convert_alpha()
+mercy_s = pygame.image.load("sprites/Buttons/b_m_s.png").convert_alpha()
 
 
 def buttons(screen,boxrect,selected=[0,0,0,0]):
@@ -150,11 +210,11 @@ def fight_elements(screen,player,boxrect,KR_mode=False):
 
     #Health bar
     health = pygame.Surface((player.info["hp"]*2.5,50))
-    health.fill("red")
+    health.fill("lightgrey")
     healthrect = screen.blit(health,(x-100,y+25))
     #Current Health Bar
     pv = pygame.Surface((player.info["current_hp"]*2.5,50))
-    pv.fill("yellow")
+    pv.fill("lightblue")
     pvrect = screen.blit(pv,healthrect.topleft)
 
     xh,yh = healthrect.topleft
@@ -187,18 +247,13 @@ def display_enemy(screen,enemy,boxrect):
 
     screen.blit(surf,rect)
 
-def name_pad(screen,spec):
-    w,h = spec
-    font = pygame.font.Font("8bitoperator_jve.ttf",40)
-    display(screen,"Name the fallen human.",font,(w*0.37,h*0.2), "white",500)
-
 font35 = pygame.font.Font("8bitoperator_jve.ttf",35)
 
 def display_info(screen,box,enemy):
     x,y = box.topleft
     display(screen,f"{enemy.info['desc']}",font35,(x+30,y+20), "white",40)
 
-selection_arrow = pygame.image.load("sprites/ui/arrows/arrow_3.png")
+selection_arrow = pygame.image.load("sprites/ui/arrows/arrows_2.png")
 selection_arrow = pygame.transform.scale_by(selection_arrow,3)
 sa_rect = selection_arrow.get_rect()
 index = 0
@@ -207,9 +262,9 @@ def display_arrow(screen,coord):
     sa_rect.center = coord
     screen.blit(selection_arrow,sa_rect)
 
-arrow_up = pygame.image.load("sprites/ui/arrows/arrow_0.png")
+arrow_up = pygame.image.load("sprites/ui/arrows/arrows_0.png")
 arrow_up = pygame.transform.scale_by(arrow_up,3)
-arrow_down = pygame.image.load("sprites/ui/arrows/arrow_1.png")
+arrow_down = pygame.image.load("sprites/ui/arrows/arrows_1.png")
 arrow_down = pygame.transform.scale_by(arrow_down,3)
 
 def display_menu_arrows(screen,box,up,down):
