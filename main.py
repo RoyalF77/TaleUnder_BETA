@@ -249,7 +249,7 @@ clock = pygame.time.Clock()
 screenrect = screen.get_rect()
 
 # Start of the Game
-start_lock = True
+start_lock = False
 while start_lock:
     screen.fill((0,0,20))
     if window_quit():
@@ -260,7 +260,7 @@ while start_lock:
     clock.tick(fps)
     pygame.display.update()
 
-name_lock = not Emergency_Stop
+name_lock = Emergency_Stop
 cursor = 0
 txt = ''
 ind = 0

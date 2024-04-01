@@ -107,14 +107,14 @@ def basics(screen,info):
     """
     display(screen,f"{info}",font,(0,0), "orange")
 
-background1 = pygame.image.load("sprites/ui/battle_back/Background.png").convert_alpha()
+background1 = pygame.image.load("sprites/ui/battle_back/Background1.png").convert_alpha()
 background1 = pygame.transform.scale_by(background1,2.2)
 
 
 def display_background(screen):
     backrect = background1.get_rect()
     x,y = screen.get_size()
-    backrect.midbottom = (x//2,y*.6)
+    backrect.midbottom = (x*0.505,y*.6)
     screen.blit(background1,backrect)
 
 def display_line(screen,box,nb_line):
