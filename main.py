@@ -122,7 +122,7 @@ def transition(txt):
         else:
             # Print on the screen the static background
             screen.blit(img,(0,0))
-            i += 0.08
+            i += 0.1
             if i <= 20:
                 Speaking(screen,rect,txt,'Kopa')
                 # Enemy anim
