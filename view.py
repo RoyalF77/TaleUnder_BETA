@@ -223,18 +223,58 @@ def fight_elements(screen,player,boxrect,KR_mode=False):
 def display_enemy(screen,enemy,boxrect):
     sizex,sizey = enemy.size
     surf,rect = enemy.anim_simple(boxrect)
-
-    if sizex < 100 or sizey < 100:
-        if sizex < sizey:
-            factor = sizey / sizex +1
-            surf = pygame.transform.scale_by(enemy.img,factor)
-            rect = surf.get_rect(topright=rect.topright)
-        else:
-            factor = sizex / sizey +1
-            surf = pygame.transform.scale_by(enemy.img,factor)
-            rect = surf.get_rect(topright=rect.topright)
-
+    rect.bottom = boxrect.top - 10
+    rect.x -= 10
     screen.blit(surf,rect)
+
+def display_enemy_frame(screen,enemy,boxrect,frame):
+    sizex,sizey = enemy.size
+    if frame == 'eyes':
+        surf,rect = enemy.anim_eyes(boxrect)
+    if frame == 'looking':
+        surf,rect = enemy.looking(boxrect)
+    if frame == 'look_yu':
+        surf,rect = enemy.looking_at_yu(boxrect)
+    rect.bottom = boxrect.top - 10
+    rect.x -= 10
+    screen.blit(surf,rect)
+
+kris_model = pygame.image.load("sprites/enemy/Kris_model.png").convert_alpha()
+kris_sheet = pygame.image.load("sprites/enemy/Kris_sheet.png").convert_alpha()
+ind = 0
+
+def display_kris(screen,boxrect):
+    global ind
+    x,y = kris_model.get_size()
+    img = pygame.Surface((x,y),pygame.SRCALPHA).convert_alpha()
+
+    ind += 0.1
+    if ind >= 6:
+        ind = 0
+
+    if ind < 1:
+        img.blit(kris_sheet,(0,0),(0,y*0,x,y))
+
+    elif ind < 2:
+        img.blit(kris_sheet,(0,0),(0,y*1,x,y))
+
+    elif ind < 3:
+        img.blit(kris_sheet,(0,0),(0,y*2,x,y))
+
+    elif ind < 4:
+        img.blit(kris_sheet,(0,0),(0,y*3,x,y))
+
+    elif ind < 5:
+        img.blit(kris_sheet,(0,0),(0,y*4,x,y))
+
+    elif ind < 6:
+        img.blit(kris_sheet,(0,0),(0,y*5,x,y))
+
+    img = pygame.transform.scale_by(img,6)
+
+    x,y = boxrect.topleft
+    rect = img.get_rect(center = (x+20,y-80))
+    screen.blit(img,rect)
 
 font35 = pygame.font.Font("8bitoperator_jve.ttf",35)
 
@@ -242,7 +282,21 @@ def display_info(screen,box,enemy):
     x,y = box.topleft
     display(screen,f"{enemy.info['desc']}",font35,(x+30,y+20), "white",40)
 
-selection_arrow = pygame.image.load("sprites/ui/arrows/arrows_2.png")
+kopa_face = pygame.image.load("sprites/enemy/Kopa_Face.png").convert_alpha()
+kopa_face = pygame.transform.scale_by(kopa_face,5)
+kris_face = pygame.image.load("sprites/enemy/Kris_Face.png").convert_alpha()
+kris_face = pygame.transform.scale_by(kris_face,8)
+
+def Speaking(screen,box,txt,perso):
+    x,y = box.topleft
+    if perso == 'Kopa':
+        screen.blit(kopa_face,(x+30,y+25))
+        display(screen,txt,font_namepad,(x+160,y+70), "white",30)
+    if perso == 'Kris':
+        screen.blit(kris_face,(x+20,y+50))
+        display(screen,txt,font_namepad,(x+190,y+70), "white",30)
+
+selection_arrow = pygame.image.load("sprites/ui/arrows/arrows_2.png").convert_alpha()
 selection_arrow = pygame.transform.scale_by(selection_arrow,3)
 sa_rect = selection_arrow.get_rect()
 index = 0
@@ -251,9 +305,9 @@ def display_arrow(screen,coord):
     sa_rect.center = coord
     screen.blit(selection_arrow,sa_rect)
 
-arrow_up = pygame.image.load("sprites/ui/arrows/arrows_0.png")
+arrow_up = pygame.image.load("sprites/ui/arrows/arrows_0.png").convert_alpha()
 arrow_up = pygame.transform.scale_by(arrow_up,3)
-arrow_down = pygame.image.load("sprites/ui/arrows/arrows_1.png")
+arrow_down = pygame.image.load("sprites/ui/arrows/arrows_1.png").convert_alpha()
 arrow_down = pygame.transform.scale_by(arrow_down,3)
 
 def display_menu_arrows(screen,box,up,down):

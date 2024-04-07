@@ -1,23 +1,23 @@
 import pygame
 # Enemy DATABASE
 
-class Sans:
+class Kopa:
 
     def __init__(self):
-        self.sheet = pygame.image.load("sprites/enemy/Sans_sheet.png").convert_alpha()
-        self.img = pygame.image.load("sprites/enemy/Sans_Model.png").convert_alpha()
+        self.sheet = pygame.image.load("sprites/enemy/Kopa_sheet.png").convert_alpha()
+        self.img = pygame.image.load("sprites/enemy/Kopa_model.png").convert_alpha()
         self.rect = self.img.get_rect()
         self.size = self.img.get_size()
         self.index = [0,0]
         self.info = {
-            "name" : "Sans",
-            "desc" : "* Sans - 1 ATK 1 DEF\n* The easiest enemy.\n* Can only deal 1 damage.",
-            "hp" : 40,
-            "at" : 1,
-            "df" : 2,
-            "xp_reward" : 0,
-            "gold_reward" : 0,
-            "KR" : True
+            "name" : "Kopa",
+            "desc" : "* Kopa - Royal Guard\nShe will not let you pass",
+            "hp" : 100,
+            "at" : 10,
+            "df" : 10,
+            "xp_reward" : 50,
+            "gold_reward" : 200,
+            "KR" : False
         }
         self.act = {
             0 : "check",
@@ -28,16 +28,16 @@ class Sans:
             5 : "topo",
         }
         self.act_txt = {
-            "check" : "* The easiest enemy.\n* Can only deal 1 damage.",
-            "compliment" : "* He don't seems to care\n* Its too late.",
-            "insult" : "* He's ATK power increased",
-            "limitless" : "* Wait what is thats ?"
+            "check" : "* 10 ATK 10 DEF\n* She's looking at you with a hatefull face",
+            "compliment" : "* She don't seems to care",
+            "insult" : "* ATK power increased",
+            "call help" : "* But nobody came"
         }
         self.mercy = {
             0 : "Spare",
         }
         self.mercy_txt = {
-            "Spare" : "* Wait wait, sparing now ?\n* NO YOU WILL NOT =)"
+            "Spare" : "* ATK power increased"
         }
     
     def update(self):
@@ -45,118 +45,82 @@ class Sans:
         self.size = self.img.get_size()
     
     def anim_simple(self,boxrect):
-        x,y = self.img.get_size()
+        x,y = self.size
         img = pygame.Surface((x,y),pygame.SRCALPHA).convert_alpha()
-        self.index[0] += 0.03
-        if self.index[0] >= 2:
+
+        self.index[0] += 0.1
+        if self.index[0] >= 6:
             self.index[0] = 0
+
         if self.index[0] < 1:
-            img.blit(self.sheet,(0,0),(0,y*10,x,y))
+            img.blit(self.sheet,(0,0),(0,y*0,x,y))
+
         elif self.index[0] < 2:
-            img.blit(self.sheet,(0,0),(0,y*11,x,y))
+            img.blit(self.sheet,(0,0),(0,y*1,x,y))
+
+        elif self.index[0] < 3:
+            img.blit(self.sheet,(0,0),(0,y*2,x,y))
+
+        elif self.index[0] < 4:
+            img.blit(self.sheet,(0,0),(0,y*3,x,y))
+
+        elif self.index[0] < 5:
+            img.blit(self.sheet,(0,0),(0,y*4,x,y))
+
+        elif self.index[0] < 6:
+            img.blit(self.sheet,(0,0),(0,y*5,x,y))
+
+        img = pygame.transform.scale_by(img,3.5)
+
         x,y = boxrect.midtop
         rect = img.get_rect(midbottom = (x+20,y-10))
         self.rect = rect
         return img,rect
     
-    def anim_hand_up(self):
-        frame_1 = pygame.image.load("sprites/enemy/Sans/sans_hand_up.png").convert_alpha()
-        frame_2 = pygame.image.load("sprites/enemy/Sans/sans_hand_up_down_trans.png").convert_alpha()
-        frame_3 = pygame.image.load("sprites/enemy/Sans/sans_hand_down.png").convert_alpha()
-        self.index[1] += 0.1
-        if self.index[1] >= 3:
-            self.index[1] = 0
-        if self.index[1] < 0.5:
-            self.img = frame_3
-        elif self.index[1] < 1:
-            self.img = frame_2
-        elif self.index[1] < 3:
-            self.img = frame_1
-    
-    def anim_hand_down(self):
-        frame_1 = pygame.image.load("sprites/enemy/Sans/sans_hand_up.png").convert_alpha()
-        frame_2 = pygame.image.load("sprites/enemy/Sans/sans_hand_up_down_trans.png").convert_alpha()
-        frame_3 = pygame.image.load("sprites/enemy/Sans/sans_hand_down.png").convert_alpha()
-        self.index[1] += 0.1
-        if self.index[1] >= 3:
-            self.index[1] = 0
-        if self.index[1] < 0.5:
-            self.img = frame_1
-        elif self.index[1] < 1:
-            self.img = frame_2
-        elif self.index[1] < 3:
-            self.img = frame_3
-    
-    def anim_hand_left(self):
-        frame_1 = pygame.image.load("sprites/enemy/Sans/sans_hand_left.png").convert_alpha()
-        frame_2 = pygame.image.load("sprites/enemy/Sans/sans_hand_left_trans.png").convert_alpha()
-        frame_3 = pygame.image.load("sprites/enemy/Sans/sans_1.png").convert_alpha()
-        self.index[1] += 0.1
-        if self.index[1] >= 3:
-            self.index[1] = 0
-        if self.index[1] < 0.5:
-            self.img = frame_3
-        elif self.index[1] < 1:
-            self.img = frame_2
-        elif self.index[1] < 3:
-            self.img = frame_1
-
-    def anim_hand_left(self):
-        frame_1 = pygame.image.load("sprites/enemy/Sans/sans_hand_left.png").convert_alpha()
-        frame_2 = pygame.image.load("sprites/enemy/Sans/sans_hand_left_trans.png").convert_alpha()
-        frame_3 = pygame.image.load("sprites/enemy/Sans/sans_1.png").convert_alpha()
-        self.index[1] += 0.1
-        if self.index[1] >= 3:
-            self.index[1] = 0
-        if self.index[1] < 0.5:
-            self.img = frame_1
-        elif self.index[1] < 1:
-            self.img = frame_2
-        elif self.index[1] < 3:
-            self.img = frame_3
-
-class Froggit2:
-
-    def __init__(self):
-        self.sheet = pygame.image.load("sprites/enemy/Froggit2_sheet.png").convert_alpha()
-        self.img = pygame.image.load("sprites/enemy/Froggit2.png").convert_alpha()
-        self.rect = self.img.get_rect()
-        self.size = self.img.get_size()
-        self.index = [0,0]
-        self.info = {
-            "name" : "Froggit",
-            "desc" : "* FROGGIT - ATK 6 DEF 8\n* Life is difficult for this enemy.\n* Seems more powerfull than the others",
-            "hp" : 30,
-            "at" : 6,
-            "df" : 8,
-            "xp_reward" : 15,
-            "gold_reward" : 30,
-            "KR" : False
-        }
-        self.act = {
-            "left_button1" : "stats",
-            "left_button2" : "compliment",
-            "left_button3" : "insult",
-            "right_button1" : "limitless"
-        }
-        
-
-    def update(self):
-        self.rect = self.img.get_rect()
-        self.size = self.img.get_size()
-    
-    def anim_simple(self,boxrect):
-        x,y = self.img.get_size()
+    def anim_eyes(self,boxrect):
+        x,y = self.size
         img = pygame.Surface((x,y),pygame.SRCALPHA).convert_alpha()
-        self.index[0] += 0.03
+
+        self.index[0] += 0.02
         if self.index[0] >= 2:
             self.index[0] = 0
+
         if self.index[0] < 1:
-            img.blit(self.sheet,(0,0),(0,0,x,y))
+            img.blit(self.sheet,(0,0),(0,y*7,x,y))
+
         elif self.index[0] < 2:
-            img.blit(self.sheet,(0,0),(0,y,x,y))
+            img.blit(self.sheet,(0,0),(0,y*8,x,y))
+
+        img = pygame.transform.scale_by(img,3.5)
+
         x,y = boxrect.midtop
-        rect = img.get_rect(midbottom = (x,y-10))
+        rect = img.get_rect(midbottom = (x+20,y-10))
+        self.rect = rect
+        return img,rect
+
+    def looking(self,boxrect):
+        x,y = self.size
+        img = pygame.Surface((x,y),pygame.SRCALPHA).convert_alpha()
+
+        img.blit(self.sheet,(0,0),(0,y*6,x,y))
+
+        img = pygame.transform.scale_by(img,3.5)
+
+        x,y = boxrect.midtop
+        rect = img.get_rect(midbottom = (x+20,y-10))
+        self.rect = rect
+        return img,rect
+    
+    def looking_at_yu(self,boxrect):
+        x,y = self.size
+        img = pygame.Surface((x,y),pygame.SRCALPHA).convert_alpha()
+
+        img.blit(self.sheet,(0,0),(0,y*9,x,y))
+
+        img = pygame.transform.scale_by(img,3.5)
+
+        x,y = boxrect.midtop
+        rect = img.get_rect(midbottom = (x+20,y-10))
         self.rect = rect
         return img,rect
 
@@ -342,9 +306,6 @@ def recover_hp(player,hp):
 
 red_soul = pygame.image.load("sprites/Souls/new_soul.png").convert_alpha()
 blue_soul = pygame.image.load("sprites/Souls/blue_soul.png").convert_alpha()
-yellow_soul = pygame.image.load("sprites/Souls/yellow_soul.png").convert_alpha()
-green_soul = pygame.image.load("sprites/Souls/green_soul.png").convert_alpha()
-purple_soul = pygame.image.load("sprites/Souls/purple_soul.png").convert_alpha()
 
 class Player:
 
@@ -369,12 +330,6 @@ class Player:
             self.img = red_soul
         if flags == 'blue':
             self.img = blue_soul
-        if flags == 'yellow':
-            self.img = yellow_soul
-        if flags == 'green':
-            self.img = green_soul
-        if flags == 'purple':
-            self.img = purple_soul
 
     def update_stats(self):
         if self.info["level"]<20 and xp_system[self.info["level"]] <= self.info["xp"]:

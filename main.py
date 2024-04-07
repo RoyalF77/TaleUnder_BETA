@@ -10,6 +10,138 @@ from view import *
 from controller import *
 from model import *
 
+def fin_combat():
+    # create the background static
+    img = pygame.Surface((width,height))
+    # Display the color background
+    img.fill((0,0,20))
+    # Display the green boxes
+    display_background(img)
+    # Init boxfight
+    surf,rect = boxfight(img,width*0.6,height*0.3,(width*0.5,height*0.6))
+    surfrect = surf.get_rect(center = rect.center)
+    # Init buttons
+    buttons(img,rect,[0,0,0,0])
+    player.rect.center = rect.center
+
+    # Begin the loop
+    combat_lock = True
+    i = 0
+    while combat_lock:
+        # If window closed
+        if window_quit():
+            combat_lock = False
+            return False
+        else:
+            # Print on the screen the static background
+            screen.blit(img,(0,0))
+            i += 0.08
+            if i <= 20:
+                Speaking(screen,rect,"* Now, its time to die, human",'Kopa')
+                # Enemy anim
+                display_enemy(screen,enemy,rect)
+            elif i <= 40:
+                Speaking(screen,rect,"* What are you doing Kopa ?",'Kris')
+                # Enemy anim
+                display_enemy(screen,enemy,rect)
+            elif i <= 60:
+                Speaking(screen,rect,"* Kris ? Wait its dangerous, don't come a human is here !",'Kopa')
+                display_enemy_frame(screen,enemy,rect,'looking')
+            elif i <= 80:
+                Speaking(screen,rect,"* Oh its okayy, he can't be so bad",'Kris')
+                display_enemy_frame(screen,enemy,rect,'looking')
+            elif i <= 120:
+                Speaking(screen,rect,"* You see ? He don't do anything to me, don't be so mad to humans not all are bad",'Kris')
+                display_enemy_frame(screen,enemy,rect,'looking')
+                display_kris(screen,rect)
+            elif i <= 140:
+                Speaking(screen,rect,"* You pass too much time with Susie i see...",'Kopa')
+                display_enemy_frame(screen,enemy,rect,'look_yu')
+                display_kris(screen,rect)
+            elif i <= 160:
+                Speaking(screen,rect,"* Yes i know, but she's so cool! And i know you like her too",'Kris')
+                display_enemy_frame(screen,enemy,rect,'looking')
+                display_kris(screen,rect)
+            elif i <= 180:
+                Speaking(screen,rect,"* Mhh no, no, i like another person",'Kopa')
+                display_enemy_frame(screen,enemy,rect,'eyes')
+                display_kris(screen,rect)
+            elif i <= 200:
+                Speaking(screen,rect,"* Mhh i see, i see",'Kris')
+                display_enemy_frame(screen,enemy,rect,'eyes')
+                display_kris(screen,rect)
+            elif i <= 250:
+                Speaking(screen,rect,"* Nevermind, you can't be so mean to newcomers, even if they are human.",'Kris')
+                display_enemy_frame(screen,enemy,rect,'looking')
+                display_kris(screen,rect)
+            elif i <= 280:
+                Speaking(screen,rect,"* Everyone is different and I'd like you to give him a chance.",'Kris')
+                display_enemy_frame(screen,enemy,rect,'looking')
+                display_kris(screen,rect)
+            elif i <= 300:
+                Speaking(screen,rect,"* Okay... I let him go",'Kopa')
+                display_enemy_frame(screen,enemy,rect,'look_yu')
+                display_kris(screen,rect)
+            elif i > 300:
+                combat_lock = False
+                return True
+
+            # Hp bar, name...
+            fight_elements(screen,player,rect)
+            
+            # debug
+            basics(screen,[player.rect,clock])
+            # Misc
+            player.update_stats()
+            sort_inv()
+            clock.tick(fps)
+            pygame.display.update()
+
+def transition(txt):
+    # create the background static
+    img = pygame.Surface((width,height))
+    # Display the color background
+    img.fill((0,0,20))
+    # Display the green boxes
+    display_background(img)
+    # Init boxfight
+    surf,rect = boxfight(img,width*0.6,height*0.3,(width*0.5,height*0.6))
+    surfrect = surf.get_rect(center = rect.center)
+    # Init buttons
+    buttons(img,rect,[0,0,0,0])
+    player.rect.center = rect.center
+
+    # Begin the loop
+    combat_lock = True
+    i = 0
+    while combat_lock:
+        # If window closed
+        if window_quit():
+            combat_lock = False
+            return False
+        else:
+            # Print on the screen the static background
+            screen.blit(img,(0,0))
+            i += 0.08
+            if i <= 20:
+                Speaking(screen,rect,txt,'Kopa')
+                # Enemy anim
+                display_enemy(screen,enemy,rect)
+            if i > 20:
+                combat_lock = False
+                return True
+
+            # Hp bar, name...
+            fight_elements(screen,player,rect)
+            
+            # debug
+            basics(screen,[player.rect,clock])
+            # Misc
+            player.update_stats()
+            sort_inv()
+            clock.tick(fps)
+            pygame.display.update()
+
 def player_turn():
     # create the background static
     img = pygame.Surface((width,height))
@@ -284,19 +416,17 @@ dialogue_box = boxfight(screen,width*0.6,height*0.3,(width*0.5,height*0.6))
 overworld_lock = not Emergency_Stop
 soul = 'red'
 monster_combat = False
-enemy = Sans()
+enemy = Kopa()
 while overworld_lock:
     screen.fill((0,0,20))
     if window_quit():
         overworld_lock = False
         Emergency_Stop = True
     else:
-        # Si on rencontre un monstre
-        if monster_combat:
-            player_turn()
-            monster_combat = False
-
         overworld_lock,info = player_turn()
+
+        if overworld_lock:
+            overworld_lock = transition("* Do you think thats you are special or something ?")
 
         if overworld_lock:
             overworld_lock = enemy_turn(soul)
