@@ -532,31 +532,31 @@ while overworld_lock:
         overworld_lock = False
         Emergency_Stop = True
     else:
-        # Emergency_Stop,overworld_lock,info = player_turn()
+        Emergency_Stop,overworld_lock,info = player_turn()
 
-        # if overworld_lock:
-        #     Emergency_Stop,overworld_lock = transition("* Do you think thats you are special or something ?")
+        if overworld_lock:
+            Emergency_Stop,overworld_lock = transition("* Do you think thats you are special or something ?")
 
-        # if overworld_lock:
-        #     Emergency_Stop,overworld_lock = enemy_turn(soul,1)
+        if overworld_lock:
+            Emergency_Stop,overworld_lock = enemy_turn(soul,1)
 
-        # if overworld_lock:
-        #     Emergency_Stop,overworld_lock,info = player_turn()
+        if overworld_lock:
+            Emergency_Stop,overworld_lock,info = player_turn()
 
-        # if overworld_lock:
-        #     Emergency_Stop,overworld_lock = transition("* Not bad, kid, prepare yourself")
+        if overworld_lock:
+            Emergency_Stop,overworld_lock = transition("* Not bad, kid, prepare yourself")
 
-        # if overworld_lock:
-        #     Emergency_Stop,overworld_lock = enemy_turn(soul,2)
+        if overworld_lock:
+            Emergency_Stop,overworld_lock = enemy_turn(soul,2)
 
-        # if overworld_lock:
-        #     Emergency_Stop,overworld_lock,info = player_turn()
+        if overworld_lock:
+            Emergency_Stop,overworld_lock,info = player_turn()
 
-        # if overworld_lock:
-        #     Emergency_Stop,overworld_lock = transition("* Gosh human, your hard to kill isn't it ?\nNow die.")
+        if overworld_lock:
+            Emergency_Stop,overworld_lock = transition("* Gosh human, your hard to kill isn't it ?\nNow die.")
 
-        # if overworld_lock:
-        #     Emergency_Stop,overworld_lock = enemy_turn(soul,3)
+        if overworld_lock:
+            Emergency_Stop,overworld_lock = enemy_turn(soul,3)
 
         if overworld_lock:
             Emergency_Stop,overworld_lock = fin_combat()
