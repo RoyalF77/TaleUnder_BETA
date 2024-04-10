@@ -105,7 +105,7 @@ def fin_combat():
                 # Enemy anim
                 display_enemy(screen,enemy,rect)
             elif i <= 60:
-                Speaking(screen,rect,"* Kris ? Wait its dangerous, don't come a human is here !",'Kopa')
+                Speaking(screen,rect,"* Kris ? Wait its dangerous, don't come a human is here !",'Kopa','looking')
                 display_enemy_frame(screen,enemy,rect,'looking')
             elif i <= 80:
                 Speaking(screen,rect,"* Oh its okayy, he can't be so bad",'Kris')
@@ -115,7 +115,7 @@ def fin_combat():
                 display_enemy_frame(screen,enemy,rect,'looking')
                 display_kris(screen,rect)
             elif i <= 140:
-                Speaking(screen,rect,"* You pass too much time with Susie i see...",'Kopa')
+                Speaking(screen,rect,"* You pass too much time with Susie i see...",'Kopa','look_yu')
                 display_enemy_frame(screen,enemy,rect,'look_yu')
                 display_kris(screen,rect)
             elif i <= 160:
@@ -123,7 +123,7 @@ def fin_combat():
                 display_enemy_frame(screen,enemy,rect,'looking')
                 display_kris(screen,rect)
             elif i <= 180:
-                Speaking(screen,rect,"* Mhh no, no, i like another person",'Kopa')
+                Speaking(screen,rect,"* Mhh no, no, i like another person",'Kopa','eyes')
                 display_enemy_frame(screen,enemy,rect,'eyes')
                 display_kris(screen,rect)
             elif i <= 200:
@@ -139,7 +139,7 @@ def fin_combat():
                 display_enemy_frame(screen,enemy,rect,'looking')
                 display_kris(screen,rect)
             elif i <= 290:
-                Speaking(screen,rect,"* Okay... I let him go",'Kopa')
+                Speaking(screen,rect,"* Okay... I let him go",'Kopa','look_yu')
                 display_enemy_frame(screen,enemy,rect,'look_yu')
                 display_kris(screen,rect)
             elif i > 290:
@@ -375,8 +375,6 @@ def player_turn():
             if not stop:
                 return True,False,[]
 
-
-
 def enemy_turn(soul,state):
     # create the background static
     img = pygame.Surface((width,height))
@@ -448,6 +446,10 @@ def enemy_turn(soul,state):
                 return False,True
             if state == 2 and ATT > 220:
                 return False,True
+            
+            if player.info['current_hp'] <= 5:
+                fin_combat()
+                return False,False
 
 
             # Hp bar, name...
@@ -530,31 +532,31 @@ while overworld_lock:
         overworld_lock = False
         Emergency_Stop = True
     else:
-        Emergency_Stop,overworld_lock,info = player_turn()
+        # Emergency_Stop,overworld_lock,info = player_turn()
 
-        if overworld_lock:
-            Emergency_Stop,overworld_lock = transition("* Do you think thats you are special or something ?")
+        # if overworld_lock:
+        #     Emergency_Stop,overworld_lock = transition("* Do you think thats you are special or something ?")
 
-        if overworld_lock:
-            Emergency_Stop,overworld_lock = enemy_turn(soul,1)
+        # if overworld_lock:
+        #     Emergency_Stop,overworld_lock = enemy_turn(soul,1)
 
-        if overworld_lock:
-            Emergency_Stop,overworld_lock,info = player_turn()
+        # if overworld_lock:
+        #     Emergency_Stop,overworld_lock,info = player_turn()
 
-        if overworld_lock:
-            Emergency_Stop,overworld_lock = transition("* Not bad, kid, prepare yourself")
+        # if overworld_lock:
+        #     Emergency_Stop,overworld_lock = transition("* Not bad, kid, prepare yourself")
 
-        if overworld_lock:
-            Emergency_Stop,overworld_lock = enemy_turn(soul,2)
+        # if overworld_lock:
+        #     Emergency_Stop,overworld_lock = enemy_turn(soul,2)
 
-        if overworld_lock:
-            Emergency_Stop,overworld_lock,info = player_turn()
+        # if overworld_lock:
+        #     Emergency_Stop,overworld_lock,info = player_turn()
 
-        if overworld_lock:
-            Emergency_Stop,overworld_lock = transition("* Gosh human, your hard to kill isn't it ?\nNow die.")
+        # if overworld_lock:
+        #     Emergency_Stop,overworld_lock = transition("* Gosh human, your hard to kill isn't it ?\nNow die.")
 
-        if overworld_lock:
-            Emergency_Stop,overworld_lock = enemy_turn(soul,3)
+        # if overworld_lock:
+        #     Emergency_Stop,overworld_lock = enemy_turn(soul,3)
 
         if overworld_lock:
             Emergency_Stop,overworld_lock = fin_combat()

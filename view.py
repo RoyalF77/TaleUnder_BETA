@@ -288,13 +288,26 @@ def display_info(screen,box,enemy):
 
 kopa_face = pygame.image.load("sprites/enemy/Kopa_Face.png").convert_alpha()
 kopa_face = pygame.transform.scale_by(kopa_face,5)
+kopa_face_look = pygame.image.load("sprites/enemy/Kopa_Face_looking.png").convert_alpha()
+kopa_face_look = pygame.transform.scale_by(kopa_face_look,5)
+kopa_face_look_up = pygame.image.load("sprites/enemy/Kopa_Face_looking2.png").convert_alpha()
+kopa_face_look_up = pygame.transform.scale_by(kopa_face_look_up,5)
+kopa_face_look_yu = pygame.image.load("sprites/enemy/Kopa_Face_looking3.png").convert_alpha()
+kopa_face_look_yu = pygame.transform.scale_by(kopa_face_look_yu,5)
 kris_face = pygame.image.load("sprites/enemy/Kris_Face.png").convert_alpha()
 kris_face = pygame.transform.scale_by(kris_face,8)
 
-def Speaking(screen,box,txt,perso):
+def Speaking(screen,box,txt,perso,type="n"):
     x,y = box.topleft
     if perso == 'Kopa':
-        screen.blit(kopa_face,(x+30,y+25))
+        if type == "n":
+            screen.blit(kopa_face,(x+30,y+25))
+        if type == 'looking':
+            screen.blit(kopa_face_look,(x+30,y+25))
+        if type == 'look_yu':
+            screen.blit(kopa_face_look_yu,(x+30,y+25))
+        if type == 'eyes':
+            screen.blit(kopa_face_look_up,(x+30,y+25))
         display(screen,txt,font_namepad,(x+160,y+70), "white",30)
     if perso == 'Kris':
         screen.blit(kris_face,(x+20,y+50))
