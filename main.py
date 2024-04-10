@@ -10,6 +10,30 @@ from view import *
 from controller import *
 from model import *
 
+class attack_G_D:
+
+    def __init__(self,sens,rect,modif,speed=2):
+        self.att_touch = True
+        self.vitesse = speed
+        self.sens = sens
+        self.att = [0,0]
+        if sens == 'r':
+            self.att = [rect.top,rect.top+modif]
+        if sens == 'l':
+            self.att = [rect.right,rect.top+modif]
+        if sens == 't':
+            self.att = [rect.left+modif,rect.bottom]
+        if sens == 'd':
+            self.att = [rect.left+modif,rect.top]
+        
+
+    def begin(self,enemy,rect):
+        if self.att_touch :
+            # attack
+            enemy_attack(screen,attack1(self.att,self.vitesse,self.sens))
+            # damage on soul
+            self.att_touch = enemy.degat(self.att,player,rect,self.vitesse,self.sens)
+
 def fin_combat():
     # create the background static
     img = pygame.Surface((width,height))
@@ -90,7 +114,7 @@ def fin_combat():
             fight_elements(screen,player,rect)
             
             # debug
-            basics(screen,[player.rect,clock])
+            basics(screen,[clock])
             # Misc
             player.update_stats()
             sort_inv()
@@ -135,7 +159,7 @@ def transition(txt):
             fight_elements(screen,player,rect)
             
             # debug
-            basics(screen,[player.rect,clock])
+            basics(screen,[clock])
             # Misc
             player.update_stats()
             sort_inv()
@@ -311,10 +335,12 @@ def player_turn():
             player.update_stats()
             sort_inv()
             clock.tick(fps)
-            basics(screen,[clock,stop])
+            basics(screen,[clock])
             pygame.display.update()
             if not stop:
                 return False,[]
+
+
 
 def enemy_turn(soul):
     # create the background static
@@ -330,6 +356,13 @@ def enemy_turn(soul):
     buttons(img,rect,[0,0,0,0])
     player.rect.center = rect.center
 
+    ATT_First = [attack_G_D('r',rect,10),attack_G_D('r',rect,1*100+10),attack_G_D('r',rect,2*100+10)]
+    ATT_Second = [attack_G_D('l',rect,60,10),attack_G_D('l',rect,160,10)]
+    ATT_Third = [attack_G_D('t',rect,0),attack_G_D('t',rect,80),attack_G_D('t',rect,80*2),attack_G_D('t',rect,80*3),attack_G_D('t',rect,80*4),attack_G_D('t',rect,80*5),attack_G_D('t',rect,80*6)]
+    ATT_Fourth = [attack_G_D('d',rect,40,4),attack_G_D('d',rect,40*3,4),attack_G_D('d',rect,40*5,4),attack_G_D('d',rect,40*7,4),attack_G_D('d',rect,40*9,4),attack_G_D('d',rect,40*9,4),attack_G_D('d',rect,40*11,4)]
+
+    ATT = 0
+
     # Begin the loop
     combat_lock = True
     while combat_lock:
@@ -340,6 +373,25 @@ def enemy_turn(soul):
         else:
             # Print on the screen the static background
             screen.blit(img,(0,0))
+
+            ATT += 1
+
+            for el in ATT_First:
+                el.begin(enemy,rect)
+
+            if ATT > 100:
+                for el in ATT_Second:
+                    el.begin(enemy,rect)
+            
+            if ATT > 150:
+                for el in ATT_Third:
+                    el.begin(enemy,rect)
+            
+            if ATT > 200:
+                for el in ATT_Fourth:
+                    el.begin(enemy,rect)
+
+
             # Hp bar, name...
             fight_elements(screen,player,rect)
             # Enemy anim
@@ -347,7 +399,7 @@ def enemy_turn(soul):
             # draw the soul
             draw_player(screen,player)
             # debug
-            basics(screen,[player.rect,clock])
+            basics(screen,[clock,player.rect,ATT])
             # blue/red soul
             soul = modif_soul(soul)
             # Stop condition
@@ -370,7 +422,7 @@ info["name"] = "Frisk"
 info["xp"] = 0
 info["level"] = 5
 info["hp"] = hp_system[info["level"]]
-info["current_hp"] = info["hp"]//2
+info["current_hp"] = info["hp"]
 info["at"] = at_system[info["level"]]
 info["df"] = df_system[info["level"]]
 
@@ -423,10 +475,10 @@ while overworld_lock:
         overworld_lock = False
         Emergency_Stop = True
     else:
-        overworld_lock,info = player_turn()
+        # overworld_lock,info = player_turn()
 
-        if overworld_lock:
-            overworld_lock = transition("* Do you think thats you are special or something ?")
+        # if overworld_lock:
+        #     overworld_lock = transition("* Do you think thats you are special or something ?")
 
         if overworld_lock:
             overworld_lock = enemy_turn(soul)

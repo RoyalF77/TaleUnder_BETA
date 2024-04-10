@@ -39,6 +39,7 @@ class Kopa:
         self.mercy_txt = {
             "Spare" : "* ATK power increased"
         }
+        self.Attack_bullet =pygame.image.load("sprites/ui/att1.png").convert_alpha()
     
     def update(self):
         self.rect = self.img.get_rect()
@@ -123,6 +124,38 @@ class Kopa:
         rect = img.get_rect(midbottom = (x+20,y-10))
         self.rect = rect
         return img,rect
+
+    def degat(self, att,player,rect,vitesse,sens):
+        rect1=self.Attack_bullet.get_rect()
+        rect1[0]=att[0]
+        rect1[1]=att[1]
+
+        if rect1.colliderect(player.rect) and player.info["current_hp"] >= self.info["at"]//2:
+            player.info["current_hp"]-= self.info["at"]//2
+            return False
+        
+        if sens == 'r' and att[0] > rect.right-10-vitesse:
+            return False
+        if sens == 'l'and att[0] < rect.left-vitesse:
+            return False
+        if sens == 't' and att[1] < rect.top-vitesse :
+            return False
+        if sens == 'd'and att[1] > rect.bottom-15-vitesse :
+            return False
+        return True
+                
+def attack1(att,vitesse,sens):
+    x,y=att
+    if sens == 't':
+        att[1]-=vitesse
+    if sens == 'd':
+        att[1]+=vitesse
+    if sens == 'r':
+        att[0]+=vitesse
+    if sens == 'l':
+        att[0]-=vitesse
+    (x,y) = att
+    return x,y    
 
 # ITEM DATABASE
 Bandage = {

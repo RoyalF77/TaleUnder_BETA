@@ -6,7 +6,7 @@ font = pygame.font.Font("8bitoperator_jve.ttf",fontsize)
 
 def display_StartScreen(screen):
     x,y = screen.get_size()
-    logo = pygame.image.load("sprites/NCover.png").convert_alpha()
+    logo = pygame.image.load("NCover.png").convert_alpha()
     logorect = logo.get_rect(center=(x//2,y//2))
     screen.blit(logo,logorect)
     xl,yl = logorect.bottomleft
@@ -423,3 +423,12 @@ def display_item_txt(screen,box,player,cursor):
 def display_mercy_txt(screen,box,enemy,cursor):
     x,y = box.topleft
     display(screen,f"{enemy.mercy_txt[cursor]}",font35,(x+30,y+20), "white",40)
+
+Attack_bullet =pygame.image.load("sprites/ui/att1.png").convert_alpha()
+
+def enemy_attack(screen,coo):
+    x,y=coo
+    screen.blit(Attack_bullet,(x,y))
+        
+    
+font35 = pygame.font.Font("8bitoperator_jve.ttf",35)
