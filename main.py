@@ -26,13 +26,49 @@ class attack_G_D:
         if sens == 'd':
             self.att = [rect.left+modif,rect.top]
         
+        self.img =pygame.image.load("sprites/ui/att1.png").convert_alpha()
+        self.rect = self.img.get_rect()
+
 
     def begin(self,enemy,rect):
         if self.att_touch :
             # attack
-            enemy_attack(screen,attack1(self.att,self.vitesse,self.sens))
+            enemy_attack(screen,"spear",attack1(self.att,self.vitesse,self.sens),self.img)
             # damage on soul
-            self.att_touch = enemy.degat(self.att,player,rect,self.vitesse,self.sens)
+            self.att_touch = enemy.degat(self.att,player,rect,self.vitesse,self.sens,self.rect,"b")
+
+class spear:
+    def __init__(self,sens,rect,modif,speed=10):
+        self.att_touch = True
+        self.vitesse = speed
+        self.sens = sens
+        self.att = [0,0]
+        self.img = pygame.image.load("sprites/ui/att3.png").convert_alpha()
+        self.img = pygame.transform.scale_by(self.img,4)
+
+        if sens == 'r':
+            self.att = [0,rect.top+modif]
+            self.img = pygame.transform.rotate(self.img,270)
+        if sens == 'l':
+            self.att = [width,rect.top+modif]
+            self.img = pygame.transform.rotate(self.img,90)
+        if sens == 't':
+            self.att = [rect.left+modif,height]
+        if sens == 'd':
+            self.att = [rect.left+modif,0]
+            self.img = pygame.transform.rotate(self.img,180)
+
+        self.rect = self.img.get_rect()
+
+    def in_out(self):
+        pass
+
+    def passing(self,enemy,rect):
+        if self.att_touch :
+            # attack
+            enemy_attack(screen,"spear",attack1(self.att,self.vitesse,self.sens),self.img)
+            # damage on soul
+            self.att_touch = enemy.degat(self.att,player,rect,self.vitesse,self.sens,self.rect,"s",(width,height))
 
 def fin_combat():
     # create the background static
@@ -55,7 +91,7 @@ def fin_combat():
         # If window closed
         if window_quit():
             combat_lock = False
-            return False
+            return True,False
         else:
             # Print on the screen the static background
             screen.blit(img,(0,0))
@@ -94,21 +130,21 @@ def fin_combat():
                 Speaking(screen,rect,"* Mhh i see, i see",'Kris')
                 display_enemy_frame(screen,enemy,rect,'eyes')
                 display_kris(screen,rect)
-            elif i <= 250:
+            elif i <= 230:
                 Speaking(screen,rect,"* Nevermind, you can't be so mean to newcomers, even if they are human.",'Kris')
                 display_enemy_frame(screen,enemy,rect,'looking')
                 display_kris(screen,rect)
-            elif i <= 280:
+            elif i <= 260:
                 Speaking(screen,rect,"* Everyone is different and I'd like you to give him a chance.",'Kris')
                 display_enemy_frame(screen,enemy,rect,'looking')
                 display_kris(screen,rect)
-            elif i <= 300:
+            elif i <= 290:
                 Speaking(screen,rect,"* Okay... I let him go",'Kopa')
                 display_enemy_frame(screen,enemy,rect,'look_yu')
                 display_kris(screen,rect)
-            elif i > 300:
+            elif i > 290:
                 combat_lock = False
-                return True
+                return False,True
 
             # Hp bar, name...
             fight_elements(screen,player,rect)
@@ -142,18 +178,18 @@ def transition(txt):
         # If window closed
         if window_quit():
             combat_lock = False
-            return False
+            return True,False
         else:
             # Print on the screen the static background
             screen.blit(img,(0,0))
             i += 0.1
-            if i <= 20:
+            if i <= 15:
                 Speaking(screen,rect,txt,'Kopa')
                 # Enemy anim
                 display_enemy(screen,enemy,rect)
-            if i > 20:
+            if i > 15:
                 combat_lock = False
-                return True
+                return False,True
 
             # Hp bar, name...
             fight_elements(screen,player,rect)
@@ -227,7 +263,7 @@ def player_turn():
                         stop = not window_quit()
                         display_act_txt(screen,rect,enemy,cursor)
                         if nmb_hit > 10:
-                            return True,[selected,cursor]
+                            return False,True,[selected,cursor]
                         nmb_hit += 0.1
                     
                     if selected == 'i':
@@ -237,14 +273,14 @@ def player_turn():
                         if nmb_hit == 0:
                             recover_hp(player,player.inv[cursor]['hp_give'])
                         if nmb_hit > 10:
-                            return True,[selected]
+                            return False,True,[selected]
                         nmb_hit += 0.1
 
                     if selected == 'm':
                         stop = not window_quit()
                         display_mercy_txt(screen,rect,enemy,cursor)
                         if nmb_hit > 10:
-                            return True, [selected,cursor]
+                            return False,True, [selected,cursor]
                         nmb_hit += 0.1
                 else:
                     stop,buttonstab,selected,arrow_coord,elem,action_pressed,cursor = in_menu(buttonstab,selected,rect,player,enemy)
@@ -272,8 +308,6 @@ def player_turn():
             buttons(screen,rect,buttonstab)
             # Hp bar, name...
             fight_elements(screen,player,rect)
-            # attack_anim(screen,rect,enemy,True)
-            
             # Enemy anim
             display_enemy(screen,enemy,rect)
             if selected == 'f':
@@ -309,7 +343,7 @@ def player_turn():
                     
                     if nmb_hit >= 100:
                         enemy.info['hp'] -= damage
-                        return True,['f']
+                        return False,True,['f']
                 
                 if glove_t[0]:
                     i = display_glove(screen,enemy,1,i)
@@ -332,17 +366,18 @@ def player_turn():
                     if p > 16 :
                         glove_t[4] = 0
             # Misc
+            basics(screen,[clock])
             player.update_stats()
             sort_inv()
             clock.tick(fps)
-            basics(screen,[clock])
+            
             pygame.display.update()
             if not stop:
-                return False,[]
+                return True,False,[]
 
 
 
-def enemy_turn(soul):
+def enemy_turn(soul,state):
     # create the background static
     img = pygame.Surface((width,height))
     # Display the color background
@@ -356,40 +391,63 @@ def enemy_turn(soul):
     buttons(img,rect,[0,0,0,0])
     player.rect.center = rect.center
 
-    ATT_First = [attack_G_D('r',rect,10),attack_G_D('r',rect,1*100+10),attack_G_D('r',rect,2*100+10)]
-    ATT_Second = [attack_G_D('l',rect,60,10),attack_G_D('l',rect,160,10)]
-    ATT_Third = [attack_G_D('t',rect,0),attack_G_D('t',rect,80),attack_G_D('t',rect,80*2),attack_G_D('t',rect,80*3),attack_G_D('t',rect,80*4),attack_G_D('t',rect,80*5),attack_G_D('t',rect,80*6)]
-    ATT_Fourth = [attack_G_D('d',rect,40,4),attack_G_D('d',rect,40*3,4),attack_G_D('d',rect,40*5,4),attack_G_D('d',rect,40*7,4),attack_G_D('d',rect,40*9,4),attack_G_D('d',rect,40*9,4),attack_G_D('d',rect,40*11,4)]
+    if state == 1 or state == 3:
+        ATT_First = [attack_G_D('r',rect,10),attack_G_D('r',rect,1*100+10),attack_G_D('r',rect,2*100+10)]
+        ATT_Second = [attack_G_D('l',rect,60,10),attack_G_D('l',rect,160,10)]
+        ATT_Third = [attack_G_D('t',rect,0),attack_G_D('t',rect,80),attack_G_D('t',rect,80*2),attack_G_D('t',rect,80*3),attack_G_D('t',rect,80*4),attack_G_D('t',rect,80*5),attack_G_D('t',rect,80*6)]
+        ATT_Fourth = [attack_G_D('d',rect,40,4),attack_G_D('d',rect,40*3,4),attack_G_D('d',rect,40*5,4),attack_G_D('d',rect,40*7,4),attack_G_D('d',rect,40*9,4),attack_G_D('d',rect,40*9,4),attack_G_D('d',rect,40*11,4)]
+    if state == 2 or state == 3:
+        ATT_S_First = [spear('l',rect,100,9),spear('r',rect,20),spear('r',rect,180)]
+        ATT_S_Second = [spear('l',rect,20,12),spear('l',rect,100,15),spear('l',rect,180)]
+        ATT_S_Third = [spear('t',rect,20,12),spear('t',rect,100,12),spear('t',rect,180,12),spear('t',rect,340,12),spear('t',rect,440,12)]
 
     ATT = 0
-
     # Begin the loop
     combat_lock = True
     while combat_lock:
         # If window closed
         if window_quit():
             combat_lock = False
-            return False
+            return True,False
         else:
             # Print on the screen the static background
             screen.blit(img,(0,0))
 
             ATT += 1
-
-            for el in ATT_First:
-                el.begin(enemy,rect)
-
-            if ATT > 100:
-                for el in ATT_Second:
-                    el.begin(enemy,rect)
             
-            if ATT > 150:
-                for el in ATT_Third:
+            if state == 1 or state == 3:
+                for el in ATT_First:
                     el.begin(enemy,rect)
-            
-            if ATT > 200:
-                for el in ATT_Fourth:
-                    el.begin(enemy,rect)
+
+                if ATT > 100:
+                    for el in ATT_Second:
+                        el.begin(enemy,rect)
+                
+                if ATT > 150:
+                    for el in ATT_Third:
+                        el.begin(enemy,rect)
+                
+                if ATT > 200:
+                    for el in ATT_Fourth:
+                        el.begin(enemy,rect)
+
+
+            if state == 2 or state == 3:
+                for el in ATT_S_First:
+                    el.passing(enemy,rect)
+
+                if ATT > 100:
+                    for el in ATT_S_Second:
+                        el.passing(enemy,rect)
+
+                if ATT > 150:
+                    for el in ATT_S_Third:
+                        el.passing(enemy,rect)
+
+            if state in [1,3] and ATT > 240:
+                return False,True
+            if state == 2 and ATT > 220:
+                return False,True
 
 
             # Hp bar, name...
@@ -399,7 +457,7 @@ def enemy_turn(soul):
             # draw the soul
             draw_player(screen,player)
             # debug
-            basics(screen,[clock,player.rect,ATT])
+            basics(screen,[clock,player.rect])
             # blue/red soul
             soul = modif_soul(soul)
             # Stop condition
@@ -413,7 +471,7 @@ def enemy_turn(soul):
 Emergency_Stop = False
 
 # Window Name and Icon
-ico = pygame.image.load("sprites/Souls/red_soul.png")
+ico = pygame.image.load("sprites/Souls/new_soul.png")
 pygame.display.set_caption("TaleUnder_BETA")
 pygame.display.set_icon(ico)
 
@@ -433,18 +491,15 @@ clock = pygame.time.Clock()
 screenrect = screen.get_rect()
 
 # Start of the Game
-start_lock = False
+start_lock = True
 while start_lock:
     screen.fill((0,0,20))
-    if window_quit():
-        start_lock = False
-        Emergency_Stop = True
     display_StartScreen(screen)
-    start_lock = waiting_room()
+    start_lock,Emergency_Stop = waiting_room()
     clock.tick(fps)
     pygame.display.update()
-
-name_lock = Emergency_Stop
+ 
+name_lock = not Emergency_Stop
 cursor = 0
 txt = ''
 ind = 0
@@ -475,14 +530,52 @@ while overworld_lock:
         overworld_lock = False
         Emergency_Stop = True
     else:
-        # overworld_lock,info = player_turn()
-
-        # if overworld_lock:
-        #     overworld_lock = transition("* Do you think thats you are special or something ?")
+        Emergency_Stop,overworld_lock,info = player_turn()
 
         if overworld_lock:
-            overworld_lock = enemy_turn(soul)
+            Emergency_Stop,overworld_lock = transition("* Do you think thats you are special or something ?")
+
+        if overworld_lock:
+            Emergency_Stop,overworld_lock = enemy_turn(soul,1)
+
+        if overworld_lock:
+            Emergency_Stop,overworld_lock,info = player_turn()
+
+        if overworld_lock:
+            Emergency_Stop,overworld_lock = transition("* Not bad, kid, prepare yourself")
+
+        if overworld_lock:
+            Emergency_Stop,overworld_lock = enemy_turn(soul,2)
+
+        if overworld_lock:
+            Emergency_Stop,overworld_lock,info = player_turn()
+
+        if overworld_lock:
+            Emergency_Stop,overworld_lock = transition("* Gosh human, your hard to kill isn't it ?\nNow die.")
+
+        if overworld_lock:
+            Emergency_Stop,overworld_lock = enemy_turn(soul,3)
+
+        if overworld_lock:
+            Emergency_Stop,overworld_lock = fin_combat()
 
         overworld_lock = False
         
+end_lock = not Emergency_Stop
+slt = 0
+while end_lock:
+    screen.fill((0,0,20))
+    if window_quit():
+        end_lock = False
+        Emergency_Stop = True
+    slt += 1
+    display_EndScreen(screen)
+
+    if slt > 250:
+        end_lock = False
+
+    clock.tick(fps)
+    pygame.display.update()
+
+
 pygame.quit()

@@ -23,24 +23,25 @@ class Kopa:
             0 : "check",
             1 : "compliment",
             2 : "insult",
-            3 : "limitless",
-            4 : "mental kill",
-            5 : "topo",
+            3 : "call help"
         }
         self.act_txt = {
             "check" : "* 10 ATK 10 DEF\n* She's looking at you with a hatefull face",
             "compliment" : "* She don't seems to care",
-            "insult" : "* ATK power increased",
+            "insult" : "* She don't seems to care of your words",
             "call help" : "* But nobody came"
         }
         self.mercy = {
             0 : "Spare",
         }
         self.mercy_txt = {
-            "Spare" : "* ATK power increased"
+            "Spare" : "* Your Sparing Kopa, Nothing Happend"
         }
         self.Attack_bullet =pygame.image.load("sprites/ui/att1.png").convert_alpha()
-    
+        self.Spear = pygame.image.load("sprites/ui/att3.png").convert_alpha()
+        self.Spear = pygame.transform.scale_by(self.Spear,4)
+
+
     def update(self):
         self.rect = self.img.get_rect()
         self.size = self.img.get_size()
@@ -125,23 +126,39 @@ class Kopa:
         self.rect = rect
         return img,rect
 
-    def degat(self, att,player,rect,vitesse,sens):
-        rect1=self.Attack_bullet.get_rect()
+    def degat(self, att,player,rect,vitesse,sens,rect1,type,taille=(0,0)):
         rect1[0]=att[0]
         rect1[1]=att[1]
 
         if rect1.colliderect(player.rect) and player.info["current_hp"] >= self.info["at"]//2:
-            player.info["current_hp"]-= self.info["at"]//2
+            if type == 'b':
+                player.info["current_hp"]-= self.info["at"]//2
+            if type == 's':
+                player.info["current_hp"]-= int(self.info["at"]*0.6)
             return False
         
-        if sens == 'r' and att[0] > rect.right-10-vitesse:
-            return False
-        if sens == 'l'and att[0] < rect.left-vitesse:
-            return False
-        if sens == 't' and att[1] < rect.top-vitesse :
-            return False
-        if sens == 'd'and att[1] > rect.bottom-15-vitesse :
-            return False
+        if type == "b":
+            if sens == 'r' and att[0] > rect.right-10-vitesse:
+                return False
+            if sens == 'l'and att[0] < rect.left-vitesse:
+                return False
+            if sens == 't' and att[1] < rect.top-vitesse :
+                return False
+            if sens == 'd'and att[1] > rect.bottom-15-vitesse :
+                return False
+            
+        if type == "s":
+            w,h = taille
+            if sens == 'r' and att[0] > w:
+                return False
+            if sens == 'l'and att[0] < -200:
+                return False
+            if sens == 't' and att[1] < -200 :
+                return False
+            if sens == 'd'and att[1] > h :
+                return False
+
+
         return True
                 
 def attack1(att,vitesse,sens):
@@ -156,6 +173,7 @@ def attack1(att,vitesse,sens):
         att[0]-=vitesse
     (x,y) = att
     return x,y    
+
 
 # ITEM DATABASE
 Bandage = {
@@ -214,11 +232,11 @@ Snowman_Piece = {
     "price" : "Free"
 }
 
-Nice_Cream = {
+Power = {
     "state" : "consumable",
-    "name" : "Nie Cream",
-    "desc" : "Instead of a joke, the wrapper says something nice. ",
-    "hp_give" : 15,
+    "name" : "Power Of Friendship",
+    "desc" : "Love and Hate",
+    "hp_give" : 999,
     "price" : [15,25,"Free",12]
 }
 
@@ -319,7 +337,7 @@ for i in range(1,21):
     else:
         df_system[i] = base + 4
 #Player Inventory
-player_inventory = [Butterscotch_Pie,Spider_Cider,Snowman_Piece,Spider_Cider,Spider_Donut,Bandage,Snail_Pie]
+player_inventory = [Butterscotch_Pie,Bandage,Snail_Pie,Power]
 sort_inv()
 
 def recover_hp(player,hp):
@@ -343,7 +361,7 @@ blue_soul = pygame.image.load("sprites/Souls/blue_soul.png").convert_alpha()
 class Player:
 
     def __init__(self,info,inventory):
-        self.img = pygame.image.load("sprites/Souls/red_soul.png").convert_alpha()
+        self.img = pygame.image.load("sprites/Souls/new_soul.png").convert_alpha()
         self.size = self.img.get_size()
         self.rect = self.img.get_rect(x=0,y=0)
         self.info = info

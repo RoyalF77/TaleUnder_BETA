@@ -6,11 +6,15 @@ font = pygame.font.Font("8bitoperator_jve.ttf",fontsize)
 
 def display_StartScreen(screen):
     x,y = screen.get_size()
-    logo = pygame.image.load("NCover.png").convert_alpha()
+    logo = pygame.image.load("sprites/Cover.png").convert_alpha()
     logorect = logo.get_rect(center=(x//2,y//2))
     screen.blit(logo,logorect)
     xl,yl = logorect.bottomleft
     display(screen,"Press z to begin your journey",font,(xl+105,yl+20), "white",500)
+
+def display_EndScreen(screen):
+    x,y = screen.get_size()
+    display(screen,"Here The Beta Take An End, Thanks for playing !",font,(x*0.3,y//2), "white")
 
 Alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 txt = ''
@@ -280,7 +284,7 @@ font35 = pygame.font.Font("8bitoperator_jve.ttf",35)
 
 def display_info(screen,box,enemy):
     x,y = box.topleft
-    display(screen,f"{enemy.info['desc']}",font35,(x+30,y+20), "white",40)
+    display(screen,f"{enemy.info['desc']}\n- {enemy.info['hp']} HP -",font35,(x+30,y+20), "white",40)
 
 kopa_face = pygame.image.load("sprites/enemy/Kopa_Face.png").convert_alpha()
 kopa_face = pygame.transform.scale_by(kopa_face,5)
@@ -424,11 +428,14 @@ def display_mercy_txt(screen,box,enemy,cursor):
     x,y = box.topleft
     display(screen,f"{enemy.mercy_txt[cursor]}",font35,(x+30,y+20), "white",40)
 
-Attack_bullet =pygame.image.load("sprites/ui/att1.png").convert_alpha()
+Attack_bullet = pygame.image.load("sprites/ui/att1.png").convert_alpha()
 
-def enemy_attack(screen,coo):
+def enemy_attack(screen,type,coo,img=Attack_bullet):
     x,y=coo
-    screen.blit(Attack_bullet,(x,y))
+    if type == "bullet":
+        screen.blit(Attack_bullet,(x,y))
+    if type == "spear":
+        screen.blit(img,(x,y))
         
     
 font35 = pygame.font.Font("8bitoperator_jve.ttf",35)

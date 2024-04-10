@@ -9,10 +9,12 @@ def window_quit():
     return False
 
 def waiting_room():
-    pressed = pygame.key.get_pressed()
-    if pressed[pygame.K_z]:
-        return False
-    return True
+    for event in pygame.event.get(eventtype=[pygame.KEYDOWN,pygame.QUIT]):
+        if event.type == pygame.QUIT :
+            return False,True
+        if event.key == pygame.K_z:
+            return False,False
+    return True,False
 
 Alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 stock_ancient = ""
@@ -143,17 +145,17 @@ def pturn_events(tab,player,enemy):
     if selected != 'f':
         if selected == 'a':
             lan = len(enemy.act)
-            if elements - lan > -3:
+            if elements - lan > 3:
                 elements = 3 -(elements - lan)
                 
         if selected == 'i':
             lan = len(player.inv)
-            if elements - lan > -3:
+            if elements - lan > 3:
                 elements = 3 -(elements - lan)
                 
         if selected == 'm':
             lan = len(enemy.mercy)
-            if elements - lan > -3:
+            if elements - lan > 3:
                 elements = 3 -(elements - lan)
     else:
         elements = 1
