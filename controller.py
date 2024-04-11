@@ -51,9 +51,9 @@ def name_ev(cursor):
 def modif_soul(state):
     pressed = pygame.key.get_pressed()
 
-    if pressed[pygame.K_z]:
+    if pressed[pygame.K_F1]:
         return "blue"
-    if pressed[pygame.K_a]:
+    if pressed[pygame.K_F2]:
         return "red"
     return state
 
@@ -91,7 +91,7 @@ def eturn_events(soul_mode,player,fightbox):
         if ybottom >= fightbox.bottom-5:
             blue_lock = True
         # Coeur limite haut
-        if ytop <= fightbox.top+(fightbox.bottom - fightbox.top)*0.1:
+        if ytop <= fightbox.top+(fightbox.bottom - fightbox.top)*0.01:
             blue_lock = False
         # Saut
         if pressed[pygame.K_UP] and blue_lock:

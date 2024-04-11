@@ -58,8 +58,8 @@ def selection_name(screen,spec,txt,i):
         return True
     w,h = spec
     font = pygame.font.Font("8bitoperator_jve.ttf",60)
-    if i > 50:
-        display(screen,"However, YOU CAN'T CHOOSE YOUR NAME =)",font,(w*0.2,h*0.45), "white",500)
+    if i > 80:
+        display(screen,"However, YOU CAN'T CHOOSE YOUR NAME",font,(w*0.21,h*0.45), "white",500)
     else:
         display(screen,f"Your Name is {txt}",font,(w*0.37,h*0.45), "white",500)
 

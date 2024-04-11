@@ -97,7 +97,7 @@ def fin_combat():
             screen.blit(img,(0,0))
             i += 0.08
             if i <= 20:
-                Speaking(screen,rect,"* Now, its time to die, human",'Kopa')
+                Speaking(screen,rect,"* Enough. Now, its time to die, human",'Kopa')
                 # Enemy anim
                 display_enemy(screen,enemy,rect)
             elif i <= 40:
@@ -123,7 +123,7 @@ def fin_combat():
                 display_enemy_frame(screen,enemy,rect,'looking')
                 display_kris(screen,rect)
             elif i <= 180:
-                Speaking(screen,rect,"* Mhh no, no, i like another person",'Kopa','eyes')
+                Speaking(screen,rect,"* Mhh no, no, i don't really like this type of person",'Kopa','eyes')
                 display_enemy_frame(screen,enemy,rect,'eyes')
                 display_kris(screen,rect)
             elif i <= 200:
@@ -389,15 +389,22 @@ def enemy_turn(soul,state):
     buttons(img,rect,[0,0,0,0])
     player.rect.center = rect.center
 
-    if state == 1 or state == 3:
+    if state == 1:
         ATT_First = [attack_G_D('r',rect,10),attack_G_D('r',rect,1*100+10),attack_G_D('r',rect,2*100+10)]
         ATT_Second = [attack_G_D('l',rect,60,10),attack_G_D('l',rect,160,10)]
         ATT_Third = [attack_G_D('t',rect,0),attack_G_D('t',rect,80),attack_G_D('t',rect,80*2),attack_G_D('t',rect,80*3),attack_G_D('t',rect,80*4),attack_G_D('t',rect,80*5),attack_G_D('t',rect,80*6)]
         ATT_Fourth = [attack_G_D('d',rect,40,4),attack_G_D('d',rect,40*3,4),attack_G_D('d',rect,40*5,4),attack_G_D('d',rect,40*7,4),attack_G_D('d',rect,40*9,4),attack_G_D('d',rect,40*9,4),attack_G_D('d',rect,40*11,4)]
-    if state == 2 or state == 3:
-        ATT_S_First = [spear('l',rect,100,9),spear('r',rect,20),spear('r',rect,180)]
-        ATT_S_Second = [spear('l',rect,20,12),spear('l',rect,100,15),spear('l',rect,180)]
-        ATT_S_Third = [spear('t',rect,20,12),spear('t',rect,100,12),spear('t',rect,180,12),spear('t',rect,340,12),spear('t',rect,440,12)]
+    if state == 2:
+        ATT_First = [spear('l',rect,100,9),spear('r',rect,20),spear('r',rect,180)]
+        ATT_Second = [spear('l',rect,20,12),spear('l',rect,100,15),spear('l',rect,180)]
+        ATT_Third = [spear('t',rect,20,12),spear('t',rect,100,12),spear('t',rect,180,12),spear('t',rect,340,12),spear('t',rect,440,12)]
+
+    if state == 3:
+        ATT_First = [spear('r',rect,200),spear('r',rect,150)]
+        ATT_Second = [spear('l',rect,0,15),spear('l',rect,50,15),spear('l',rect,100,15)]
+        ATT_Third = [spear('r',rect,200),spear('l',rect,150,20)]
+        ATT_Fourth = [spear('r',rect,200,15),spear('l',rect,200),spear('l',rect,150)]
+        ATT_Fifth = [spear('l',rect,50,15),spear('l',rect,100,15),attack_G_D('t',rect,0,5),attack_G_D('t',rect,150,5),attack_G_D('t',rect,350,5),attack_G_D('t',rect,480,5)]
 
     ATT = 0
     # Begin the loop
@@ -413,7 +420,7 @@ def enemy_turn(soul,state):
 
             ATT += 1
             
-            if state == 1 or state == 3:
+            if state == 1:
                 for el in ATT_First:
                     el.begin(enemy,rect)
 
@@ -428,28 +435,55 @@ def enemy_turn(soul,state):
                 if ATT > 200:
                     for el in ATT_Fourth:
                         el.begin(enemy,rect)
-
-
-            if state == 2 or state == 3:
-                for el in ATT_S_First:
+                
+                if ATT > 280:
+                    return False,True
+           
+            if state == 2:
+                for el in ATT_First:
                     el.passing(enemy,rect)
 
                 if ATT > 100:
-                    for el in ATT_S_Second:
+                    for el in ATT_Second:
                         el.passing(enemy,rect)
 
-                if ATT > 150:
-                    for el in ATT_S_Third:
+                if ATT > 120:
+                    for el in ATT_Third:
                         el.passing(enemy,rect)
 
-            if state in [1,3] and ATT > 240:
-                return False,True
-            if state == 2 and ATT > 220:
-                return False,True
+                if ATT > 220:
+                    return False,True
+                    
+            if state == 3:
+                for el in ATT_First:
+                    el.passing(enemy,rect)
+
+                if ATT > 80:
+                    for el in ATT_Second:
+                        el.passing(enemy,rect)
+
+                if ATT > 160:
+                    for el in ATT_Third:
+                        el.passing(enemy,rect)
+                
+                if ATT > 240:
+                    for el in ATT_Fourth:
+                        el.passing(enemy,rect)
+                
+                if ATT > 280:
+                    for el in ATT_Fifth:
+                        if type(el) == attack_G_D:
+                            el.begin(enemy,rect)
+                        elif type(el) == spear:
+                            el.passing(enemy,rect)
+                
+                if ATT > 380:
+                    return False,True
             
-            if player.info['current_hp'] <= 5:
-                fin_combat()
-                return False,False
+            if player.info['current_hp'] <= 5 or enemy.info['hp'] <= 5:
+                if player.info['current_hp'] <= 0:
+                    player.info['current_hp'] = 1
+                return True,True
 
 
             # Hp bar, name...
@@ -459,7 +493,7 @@ def enemy_turn(soul,state):
             # draw the soul
             draw_player(screen,player)
             # debug
-            basics(screen,[clock,player.rect])
+            basics(screen,[clock,player.rect,ATT])
             # blue/red soul
             soul = modif_soul(soul)
             # Stop condition
@@ -477,10 +511,19 @@ ico = pygame.image.load("sprites/Souls/new_soul.png")
 pygame.display.set_caption("TaleUnder_BETA")
 pygame.display.set_icon(ico)
 
+# Note # Si vous avez du mal avec le combat, changez la valeur du niveau du personnage
+#      # cependant le niveau doit être compris entre 1 et 20 inclus, les stats seront
+#      # proportionnel au niveau
+#      # L'exp est aussi fonctionnel, mais cela n'est pas très précis si vous voulez
+#      # un niveau précis
+
+# Note # Il faut savoir que normalement l'enemy ne peut pas être tué car le jeu commence
+#      # au niveau 1 donc un ajout trop important de niveau peut donner un résultat illogique
+
 info = {}
 info["name"] = "Frisk"
 info["xp"] = 0
-info["level"] = 5
+info["level"] = 1
 info["hp"] = hp_system[info["level"]]
 info["current_hp"] = info["hp"]
 info["at"] = at_system[info["level"]]
@@ -511,7 +554,7 @@ while name_lock:
     if enter:
         Emergency_Stop = selection_name(screen,(width,height),txt,ind)
         ind += 1
-        if ind > 140:
+        if ind > 160:
             name_lock = False
     else:
         txt = name_pad(screen,(width,height),cursor,select)
@@ -534,31 +577,36 @@ while overworld_lock:
     else:
         Emergency_Stop,overworld_lock,info = player_turn()
 
-        if overworld_lock:
+        if overworld_lock and not Emergency_Stop:
             Emergency_Stop,overworld_lock = transition("* Do you think thats you are special or something ?")
 
-        if overworld_lock:
+        if overworld_lock and not Emergency_Stop:
             Emergency_Stop,overworld_lock = enemy_turn(soul,1)
 
-        if overworld_lock:
+        if overworld_lock and not Emergency_Stop:
             Emergency_Stop,overworld_lock,info = player_turn()
 
-        if overworld_lock:
+        if overworld_lock and not Emergency_Stop:
             Emergency_Stop,overworld_lock = transition("* Not bad, kid, prepare yourself")
 
-        if overworld_lock:
+        if overworld_lock and not Emergency_Stop:
             Emergency_Stop,overworld_lock = enemy_turn(soul,2)
 
-        if overworld_lock:
+        if overworld_lock and not Emergency_Stop:
             Emergency_Stop,overworld_lock,info = player_turn()
 
-        if overworld_lock:
+        if overworld_lock and not Emergency_Stop:
             Emergency_Stop,overworld_lock = transition("* Gosh human, your hard to kill isn't it ?\nNow die.")
 
-        if overworld_lock:
+        if overworld_lock and not Emergency_Stop:
+            soul = 'blue'
             Emergency_Stop,overworld_lock = enemy_turn(soul,3)
 
-        if overworld_lock:
+        if overworld_lock and not Emergency_Stop:
+            Emergency_Stop,overworld_lock = fin_combat()
+        
+        if Emergency_Stop and overworld_lock:
+            Emergency_Stop = False
             Emergency_Stop,overworld_lock = fin_combat()
 
         overworld_lock = False
