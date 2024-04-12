@@ -107,7 +107,9 @@ def display(surface,text,font,pos,color,limit=500):
 
 def debug(screen,info):
     """
-    Display Debugg Text
+    Display Debug Text
+
+    info - list - Tableau de variable à afficher sur l'ecran
     """
     display(screen,f"{info}",font,(0,0), "orange")
 

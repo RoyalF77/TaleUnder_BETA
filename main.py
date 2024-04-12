@@ -1,3 +1,29 @@
+#########################################
+#                                       #
+#                                       #
+#              TaleUnder                #
+#       Par Fabien, Noa et Theault      #
+#                                       #
+#                                       #
+#########################################
+
+# Commandes :
+
+# - Flêches haut/bas/gauche/droite : aller dans une direction
+# - Z : Selectionner/interagir
+
+# Systèmes des Ames (coeurs):
+
+# - Bleu clair : Peut bouger librement dans tous les sens
+# - Bleu : Peut bouger librement de gauche a droite, mais est sous emprise d'une gravité
+
+# Musiques et FX par TobyFox et Mugger
+
+# Les lignes en # sont soit des lignes de description ou des lignes de débug
+# Vous avez aussi a votre disposition la fonction debug() qui vous permet de
+# voir le comportement d'une variable en temps réel, vous n'avez qu'a mettre
+# les variables voulus dans le tableau en argument
+
 import pygame
 pygame.init()
 
@@ -571,8 +597,10 @@ def debut_combat(Emergency_Stop,overworld_lock):
 
     return Emergency_Stop,overworld_lock
 
+# Stop Condition -> pygame.QUIT
 Emergency_Stop = False
 
+# ALL the FX
 Entry = pygame.mixer.Sound("FX/mus_sfx_cinematiccut.wav")
 Name_pad = pygame.mixer.Sound("FX/mus_disturbing.ogg")
 move = pygame.mixer.Sound("FX/snd_squeak.wav")
@@ -585,7 +613,7 @@ battle_fall = pygame.mixer.Sound("FX/snd_battlefall.wav")
 noise = pygame.mixer.Sound("FX/snd_noise.wav")
 equip = pygame.mixer.Sound("FX/snd_buyitem.wav")
 vaporised = pygame.mixer.Sound("FX/snd_vaporized.wav")
-
+# ALL the Songs
 Divided_solitude = pygame.mixer.Sound("song/final_archon.mp3")
 Divided_solitude.set_volume(0.5)
 cave = pygame.mixer.Sound("song/papyrus-overworld.mp3")
@@ -610,7 +638,7 @@ pygame.display.set_icon(ico)
 info = {}
 info["name"] = "Niko"
 info["xp"] = 0
-info["level"] = 10
+info["level"] = 1
 info["hp"] = hp_system[info["level"]]
 info["current_hp"] = info["hp"]
 info["at"] = at_system[info["level"]]
@@ -659,6 +687,7 @@ while name_lock:
     pygame.display.update()
 Name_pad.stop()
 
+# Pense bête pour les tailles de boites différentes
 # cube_box = boxfight(screen,width*0.2,height*0.3,(width*0.5,height*0.6))
 # large_box = boxfight(screen,width*0.4,height*0.3,(width*0.5,height*0.6))
 # dialogue_box = boxfight(screen,width*0.6,height*0.3,(width*0.5,height*0.6))
