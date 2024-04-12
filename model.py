@@ -126,7 +126,7 @@ class Kopa:
         self.rect = rect
         return img,rect
 
-    def degat(self, att,player,rect,vitesse,sens,rect1,type,taille=(0,0)):
+    def degat(self, att,player,rect,vitesse,sens,rect1,type,hurt,taille=(0,0)):
         rect1[0]=att[0]
         rect1[1]=att[1]
 
@@ -135,6 +135,7 @@ class Kopa:
                 player.info["current_hp"]-= int(self.info["at"]*0.2)
             if type == 's':
                 player.info["current_hp"]-= int(self.info["at"]*0.5)
+            hurt.play()
             return False
         
         if type == "b":
@@ -232,11 +233,11 @@ Snowman_Piece = {
     "price" : "Free"
 }
 
-Power = {
-    "state" : "consumable",
-    "name" : "Power Of Friendship",
-    "desc" : "Love and Hate",
-    "hp_give" : 999,
+Knife = {
+    "state" : "useable",
+    "name" : "Knife",
+    "desc" : "A Knife",
+    "hp_give" : 0,
     "price" : [15,25,"Free",12]
 }
 
@@ -337,7 +338,7 @@ for i in range(1,21):
     else:
         df_system[i] = base + 4
 #Player Inventory
-player_inventory = [Bandage,Power]
+player_inventory = [Bandage,Bandage,Snail_Pie]
 sort_inv()
 
 def recover_hp(player,hp):

@@ -35,7 +35,7 @@ class attack_G_D:
             # attack
             enemy_attack(screen,"spear",attack1(self.att,self.vitesse,self.sens),self.img)
             # damage on soul
-            self.att_touch = enemy.degat(self.att,player,rect,self.vitesse,self.sens,self.rect,"b")
+            self.att_touch = enemy.degat(self.att,player,rect,self.vitesse,self.sens,self.rect,"b",hurt)
 
 class spear:
     def __init__(self,sens,rect,modif,speed=10):
@@ -60,15 +60,12 @@ class spear:
 
         self.rect = self.img.get_rect()
 
-    def in_out(self):
-        pass
-
     def passing(self,enemy,rect):
         if self.att_touch :
             # attack
             enemy_attack(screen,"spear",attack1(self.att,self.vitesse,self.sens),self.img)
             # damage on soul
-            self.att_touch = enemy.degat(self.att,player,rect,self.vitesse,self.sens,self.rect,"s",(width,height))
+            self.att_touch = enemy.degat(self.att,player,rect,self.vitesse,self.sens,self.rect,"s",hurt,(width,height))         
 
 def fin_combat():
     # create the background static
@@ -101,9 +98,10 @@ def fin_combat():
                 # Enemy anim
                 display_enemy(screen,enemy,rect)
             elif i <= 40:
+                Divided_solitude.stop()
+                piano.play(99)
                 Speaking(screen,rect,"* What are you doing Kopa ?",'Kris')
-                # Enemy anim
-                display_enemy(screen,enemy,rect)
+                display_enemy_frame(screen,enemy,rect,'look_yu')
             elif i <= 60:
                 Speaking(screen,rect,"* Kris ? Wait it's dangerous, don't come, a human is here !",'Kopa','looking')
                 display_enemy_frame(screen,enemy,rect,'looking')
@@ -138,11 +136,13 @@ def fin_combat():
                 Speaking(screen,rect,"* Everyone is different and i'd like it if you gave him a chance.",'Kris')
                 display_enemy_frame(screen,enemy,rect,'looking')
                 display_kris(screen,rect)
-            elif i <= 290:
+            elif i <= 280:
                 Speaking(screen,rect,"* Okay... I'll let him go",'Kopa','look_yu')
                 display_enemy_frame(screen,enemy,rect,'look_yu')
                 display_kris(screen,rect)
-            elif i > 290:
+            elif i > 279:
+                vaporised.stop()
+                piano.stop()
                 combat_lock = False
                 return False,True
 
@@ -150,7 +150,7 @@ def fin_combat():
             fight_elements(screen,player,rect)
             
             # debug
-            basics(screen,[clock])
+            # debug(screen,[clock])
             # Misc
             player.update_stats()
             sort_inv()
@@ -195,7 +195,7 @@ def transition(txt):
             fight_elements(screen,player,rect)
             
             # debug
-            basics(screen,[clock])
+            # debug(screen,[clock])
             # Misc
             player.update_stats()
             sort_inv()
@@ -241,7 +241,7 @@ def player_turn():
             
             if selected == None:
                 # Selection of the menu
-                stop, buttonstab,selected = pturn_events(buttonstab,player,enemy)
+                stop, buttonstab,selected = pturn_events(buttonstab,player,enemy,move)
                 display_info(screen,rect,enemy)
             else:
                 # In a menu
@@ -254,9 +254,13 @@ def player_turn():
                     if selected == 'f':
                         stop, when_att = fight_button_pressed()
                         
-                        if nmb_hit <= 10:
+                        if nmb_hit <= 5:
                             display_attack(screen,rect)
                         if when_att:
+                            if nmb_hit <= 6:
+                                p_weak.play()
+                            elif nmb_hit <= 8:
+                                p_strong.play()
                             nmb_hit += 1
 
                     if selected == 'a':
@@ -283,7 +287,7 @@ def player_turn():
                             return False,True, [selected,cursor]
                         nmb_hit += 0.1
                 else:
-                    stop,buttonstab,selected,arrow_coord,elem,action_pressed,cursor = in_menu(buttonstab,selected,rect,player,enemy)
+                    stop,buttonstab,selected,arrow_coord,elem,action_pressed,cursor = in_menu(buttonstab,selected,rect,player,enemy,move,Item_use)
                     
                     if selected == None:
                         buttonstab = last_tab
@@ -366,7 +370,7 @@ def player_turn():
                     if p > 16 :
                         glove_t[4] = 0
             # Misc
-            basics(screen,[clock])
+            # debug(screen,[clock])
             player.update_stats()
             sort_inv()
             clock.tick(fps)
@@ -422,18 +426,26 @@ def enemy_turn(soul,state):
             
             if state == 1:
                 for el in ATT_First:
+                    if not el.att_touch:
+                        ATT_First.pop(ATT_First.index(el))
                     el.begin(enemy,rect)
 
                 if ATT > 100:
                     for el in ATT_Second:
+                        if not el.att_touch:
+                            ATT_Second.pop(ATT_Second.index(el))
                         el.begin(enemy,rect)
                 
                 if ATT > 150:
                     for el in ATT_Third:
+                        if not el.att_touch:
+                            ATT_Third.pop(ATT_Third.index(el))
                         el.begin(enemy,rect)
                 
                 if ATT > 200:
                     for el in ATT_Fourth:
+                        if not el.att_touch:
+                            ATT_Fourth.pop(ATT_Fourth.index(el))
                         el.begin(enemy,rect)
                 
                 if ATT > 280:
@@ -441,14 +453,20 @@ def enemy_turn(soul,state):
            
             if state == 2:
                 for el in ATT_First:
+                    if not el.att_touch:
+                        ATT_First.pop(ATT_First.index(el))
                     el.passing(enemy,rect)
 
                 if ATT > 100:
                     for el in ATT_Second:
+                        if not el.att_touch:
+                            ATT_Second.pop(ATT_Second.index(el))
                         el.passing(enemy,rect)
 
                 if ATT > 120:
                     for el in ATT_Third:
+                        if not el.att_touch:
+                            ATT_Third.pop(ATT_Third.index(el))
                         el.passing(enemy,rect)
 
                 if ATT > 220:
@@ -456,18 +474,26 @@ def enemy_turn(soul,state):
                     
             if state == 3:
                 for el in ATT_First:
+                    if not el.att_touch:
+                        ATT_First.pop(ATT_First.index(el))
                     el.passing(enemy,rect)
 
                 if ATT > 80:
                     for el in ATT_Second:
+                        if not el.att_touch:
+                            ATT_Second.pop(ATT_Second.index(el))
                         el.passing(enemy,rect)
 
                 if ATT > 160:
                     for el in ATT_Third:
+                        if not el.att_touch:
+                            ATT_Third.pop(ATT_Third.index(el))
                         el.passing(enemy,rect)
                 
                 if ATT > 240:
                     for el in ATT_Fourth:
+                        if not el.att_touch:
+                            ATT_Fourth.pop(ATT_Fourth.index(el))
                         el.passing(enemy,rect)
                 
                 if ATT > 280:
@@ -476,6 +502,8 @@ def enemy_turn(soul,state):
                             el.begin(enemy,rect)
                         elif type(el) == spear:
                             el.passing(enemy,rect)
+                        if not el.att_touch:
+                            ATT_Fifth.pop(ATT_Fifth.index(el))
                 
                 if ATT > 380:
                     return False,True
@@ -493,7 +521,7 @@ def enemy_turn(soul,state):
             # draw the soul
             draw_player(screen,player)
             # debug
-            basics(screen,[clock,player.rect,ATT])
+            # debug(screen,[clock,player.rect,ATT])
             # blue/red soul
             soul = modif_soul(soul)
             # Stop condition
@@ -506,7 +534,7 @@ def enemy_turn(soul,state):
 
 def debut_combat(Emergency_Stop,overworld_lock):
     soul = 'red'
-
+    Divided_solitude.play(99)
     Emergency_Stop,overworld_lock,info = player_turn()
 
     if overworld_lock and not Emergency_Stop:
@@ -545,6 +573,26 @@ def debut_combat(Emergency_Stop,overworld_lock):
 
 Emergency_Stop = False
 
+Entry = pygame.mixer.Sound("FX/mus_sfx_cinematiccut.wav")
+Name_pad = pygame.mixer.Sound("FX/mus_disturbing.ogg")
+move = pygame.mixer.Sound("FX/snd_squeak.wav")
+Item_use = pygame.mixer.Sound("FX/snd_item.wav")
+p_weak = pygame.mixer.Sound("FX/snd_punchweak.wav")
+p_strong = pygame.mixer.Sound("FX/snd_punchstrong.wav")
+p_giga = pygame.mixer.Sound("FX/mus_sfx_gigapunch.wav")
+hurt = pygame.mixer.Sound("FX/snd_hurt1.wav")
+battle_fall = pygame.mixer.Sound("FX/snd_battlefall.wav")
+noise = pygame.mixer.Sound("FX/snd_noise.wav")
+equip = pygame.mixer.Sound("FX/snd_buyitem.wav")
+vaporised = pygame.mixer.Sound("FX/snd_vaporized.wav")
+
+Divided_solitude = pygame.mixer.Sound("song/final_archon.mp3")
+Divided_solitude.set_volume(0.5)
+cave = pygame.mixer.Sound("song/papyrus-overworld.mp3")
+Divided_solitude.set_volume(0.7)
+piano = pygame.mixer.Sound("song/piano_overworld_section_v2.mp3")
+piano.set_volume(0.8)
+
 # Window Name and Icon
 ico = pygame.image.load("sprites/Souls/new_soul.png")
 pygame.display.set_caption("TaleUnder_BETA")
@@ -562,7 +610,7 @@ pygame.display.set_icon(ico)
 info = {}
 info["name"] = "Niko"
 info["xp"] = 0
-info["level"] = 1
+info["level"] = 10
 info["hp"] = hp_system[info["level"]]
 info["current_hp"] = info["hp"]
 info["at"] = at_system[info["level"]]
@@ -574,6 +622,8 @@ player = Player(info,player_inventory)
 clock = pygame.time.Clock()
 screenrect = screen.get_rect()
 
+Entry.play()
+Entry.set_volume(0.4)
 # Start of the Game
 start_lock = True
 while start_lock:
@@ -588,9 +638,12 @@ cursor = 0
 txt = ''
 ind = 0
 enter = False
+Name_pad.set_volume(0.4)
+Name_pad.play(99)
 while name_lock:
+    
     screen.fill((0,0,20))
-    Emergency_Stop,name_lock,cursor,select,enter = name_ev(cursor,enter)
+    Emergency_Stop,name_lock,cursor,select,enter = name_ev(cursor,enter,move)
     if txt == '':
         enter = False
     if enter:
@@ -604,6 +657,7 @@ while name_lock:
     
     clock.tick(fps)
     pygame.display.update()
+Name_pad.stop()
 
 # cube_box = boxfight(screen,width*0.2,height*0.3,(width*0.5,height*0.6))
 # large_box = boxfight(screen,width*0.4,height*0.3,(width*0.5,height*0.6))
@@ -633,7 +687,7 @@ t = 0
 stop = False
 
 ### ###
-
+cave.play(99)
 while overworld_lock:
     screen.fill((0,0,20))
     if window_quit():
@@ -654,11 +708,12 @@ while overworld_lock:
 
         for elt in map_collisions:
             elt.collisions(perso)
-            pygame.draw.rect(map.img,(255,0,0),elt.rect)
+            # pygame.draw.rect(map.img,(255,0,0),elt.rect)
 
         if items != []:
             for item in items:
                 if item.collisions(perso):
+                    equip.play()
                     player_inventory.append(item.item)
                     txt = [item.item]
                     items.pop(0)
@@ -680,28 +735,38 @@ while overworld_lock:
         
         for combat in combats:
             if combat.collisions(perso):
+                cave.stop()
                 stop = True
                 t += 1
                 if t < 10:
                     screen.fill("black")
                 elif t < 20:
                     screen.fill((0,0,50))
+                    if t == 10:
+                        noise.play()
                 elif t < 30:
                     screen.fill("black")
+                    if t == 20:
+                        noise.play()
                 elif t < 40:
                     screen.fill((0,0,50))
+                    if t == 30:
+                        noise.play()
                 elif t < 50:
+                    battle_fall.play()
                     Emergency_Stop,overworld_lock = debut_combat(Emergency_Stop,overworld_lock)
                     overworld_lock = False
-            pygame.draw.rect(map.img,(0,0,255),combat.rect)
+            # pygame.draw.rect(map.img,(0,0,255),combat.rect)
 
-        basics(screen,[clock,perso.rect,item.rect])    
+        # debug(screen,[clock,perso.rect,item.rect])    
         pygame.display.update()
         clock.tick(60)
         
 end_lock = not Emergency_Stop
 slt = 0
+Name_pad.play()
 while end_lock:
+    
     screen.fill((0,0,20))
     if window_quit():
         end_lock = False

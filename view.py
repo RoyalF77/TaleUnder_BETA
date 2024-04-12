@@ -105,7 +105,7 @@ def display(surface,text,font,pos,color,limit=500):
     surface.blit(render,rect)
     return render, rect
 
-def basics(screen,info):
+def debug(screen,info):
     """
     Display Debugg Text
     """
