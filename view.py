@@ -105,9 +105,11 @@ def display(surface,text,font,pos,color,limit=500):
     surface.blit(render,rect)
     return render, rect
 
-def basics(screen,info):
+def debug(screen,info):
     """
-    Display Debugg Text
+    Display Debug Text
+
+    info - list - Tableau de variable à afficher sur l'ecran
     """
     display(screen,f"{info}",font,(0,0), "orange")
 

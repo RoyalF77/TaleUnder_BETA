@@ -18,7 +18,8 @@ def waiting_room():
 
 Alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 stock_ancient = ""
-def name_ev(cursor,enter):
+def name_ev(cursor,enter,move):
+    move.set_volume(0.8)
     global stock_ancient
     if cursor == 'Erase':
         cursor = stock_ancient
@@ -28,19 +29,26 @@ def name_ev(cursor,enter):
         
         if event.key == pygame.K_LEFT and cursor -1 >= 0:
             cursor -= 1
+            move.play()
         elif event.key == pygame.K_RIGHT and cursor +1 < len(Alphabet):
             cursor += 1
+            move.play()
         elif event.key == pygame.K_UP and cursor - 7 >= 0:
             cursor -= 7
+            move.play()
         elif event.key == pygame.K_DOWN and cursor +7 < len(Alphabet):
             cursor += 7
+            move.play()
         if event.key == pygame.K_z:
+            move.play()
             return False,True,cursor,True,enter
         elif event.key == pygame.K_BACKSPACE:
             stock_ancient = cursor
+            move.play()
             return False,True,'Erase',True,enter
 
         if event.key == pygame.K_RETURN:
+            move.play()
             return False,True,cursor,False,True
 
     return False,True,cursor,False,enter
@@ -103,8 +111,9 @@ def eturn_events(soul_mode,player,fightbox):
     
     return True
 
-def pturn_events(tab,player,enemy):
+def pturn_events(tab,player,enemy,sound):
     global menu_pos,cursor, elements
+    sound.set_volume(0.5)
     menu_pos = 0
     cursor = 0
     elements = 3
@@ -119,25 +128,31 @@ def pturn_events(tab,player,enemy):
             if event.key == pygame.K_z:
                 selected = 'f'
             elif event.key == pygame.K_RIGHT:
+                sound.play()
                 tab = [0,1,0,0]
         elif tab[1]:
             if event.key == pygame.K_z:
                 selected = 'a'
             elif event.key == pygame.K_RIGHT:
+                sound.play()
                 tab = [0,0,1,0]
             elif event.key == pygame.K_LEFT:
+                sound.play()
                 tab = [1,0,0,0]
         elif tab[2]:
             if event.key == pygame.K_z:
                 selected = 'i'
             elif event.key == pygame.K_RIGHT:
+                sound.play()
                 tab = [0,0,0,1]
             elif event.key == pygame.K_LEFT:
+                sound.play()
                 tab = [0,1,0,0]
         elif tab[3]:
             if event.key == pygame.K_z:
                 selected = 'm'
             elif event.key == pygame.K_LEFT:
+                sound.play()
                 tab = [0,0,1,0]
 
     if selected != 'f':
@@ -160,11 +175,13 @@ def pturn_events(tab,player,enemy):
     
     return True, tab, selected
 
+
 menu_pos = 0
 elements = 0
 cursor = 0
-def in_menu(tab,selected,box,player,enemy):
+def in_menu(tab,selected,box,player,enemy,sound,Item_use):
     global cursor,menu_pos,elements
+    sound.set_volume(0.5)
     x,y = box.topleft
     x+= 50
     y+= 38
@@ -188,6 +205,7 @@ def in_menu(tab,selected,box,player,enemy):
             return True,[1,0,0,0],None,coord,elements,False,fonc[cursor]
         
         if event.key == pygame.K_UP :
+            sound.play()
             if menu_pos > 0:
                 menu_pos -= 1
                 cursor -= 1
@@ -198,6 +216,7 @@ def in_menu(tab,selected,box,player,enemy):
                 return True,tab,selected,coord,elements,False,fonc[cursor]
             
         if event.key == pygame.K_DOWN:
+            sound.play()
             if menu_pos < elements-1 and menu_pos <2:
                 menu_pos += 1
                 cursor += 1
@@ -208,12 +227,14 @@ def in_menu(tab,selected,box,player,enemy):
                 return True,tab,selected,coord,elements,False,fonc[cursor]
             
         if event.key == pygame.K_z:
+            Item_use.play()
             if selected == 'i':
                 return True,tab,selected,coord,elements,True,cursor
             return True,tab,selected,coord,elements,True,fonc[cursor]
-        
+    if selected == 'm':
+        cursor = 0
+        return True,tab,selected,coord,elements,False,fonc[0]
     coord = (x,y+(80*menu_pos))
-
     return True,tab,selected,coord,elements,False,fonc[cursor]
 
 def fight_button_pressed():
