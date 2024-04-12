@@ -423,7 +423,7 @@ def display_glove(screen,enemy,nmb,i):
 
 def display_attack(screen,box):
     x,y = box.topleft
-    display(screen,"Press Z ! ",font35,(x+30,y+20), "white",40)
+    display(screen,"5 x Press Z ! ",font35,(x+30,y+20), "white",40)
 
 def display_attack_damage(screen,box,dmg):
     x,y = box.topleft
@@ -452,3 +452,21 @@ def enemy_attack(screen,type,coo,img=Attack_bullet):
         
     
 font35 = pygame.font.Font("8bitoperator_jve.ttf",35)
+
+### OVERWORLD ### 
+
+def draw_player_o(screen, perso, camera):
+    screen.blit(perso.img, camera.apply(perso))
+
+def draw(screen,map):
+    screen.blit(map.img,(0,0))
+
+def draw_map(screen, map_image, camera):
+    screen.blit(map_image, camera.camera.topleft)
+
+def draw_item(screen, item):
+    screen.blit(item.img,item.rect)
+
+def display_text_item_o(screen,item):
+    w,h = screen.get_size()
+    display(screen,f"You picked up the {item["name"]}",font35,(w-500,h-50), "white")

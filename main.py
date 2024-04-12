@@ -105,17 +105,17 @@ def fin_combat():
                 # Enemy anim
                 display_enemy(screen,enemy,rect)
             elif i <= 60:
-                Speaking(screen,rect,"* Kris ? Wait its dangerous, don't come a human is here !",'Kopa','looking')
+                Speaking(screen,rect,"* Kris ? Wait it's dangerous, don't come, a human is here !",'Kopa','looking')
                 display_enemy_frame(screen,enemy,rect,'looking')
             elif i <= 80:
-                Speaking(screen,rect,"* Oh its okayy, he can't be so bad",'Kris')
+                Speaking(screen,rect,"* Oh its okayyy, he can't be that bad",'Kris')
                 display_enemy_frame(screen,enemy,rect,'looking')
             elif i <= 120:
-                Speaking(screen,rect,"* You see ? He don't do anything to me, don't be so mad to humans not all are bad",'Kris')
+                Speaking(screen,rect,"* You see ? He's not doing anything to me, don't be so mad to humans, they are not all bad",'Kris')
                 display_enemy_frame(screen,enemy,rect,'looking')
                 display_kris(screen,rect)
             elif i <= 140:
-                Speaking(screen,rect,"* You pass too much time with Susie i see...",'Kopa','look_yu')
+                Speaking(screen,rect,"* You pass too much time with Susie, i see...",'Kopa','look_yu')
                 display_enemy_frame(screen,enemy,rect,'look_yu')
                 display_kris(screen,rect)
             elif i <= 160:
@@ -127,7 +127,7 @@ def fin_combat():
                 display_enemy_frame(screen,enemy,rect,'eyes')
                 display_kris(screen,rect)
             elif i <= 200:
-                Speaking(screen,rect,"* Mhh i see, i see",'Kris')
+                Speaking(screen,rect,"* Mhh i see",'Kris')
                 display_enemy_frame(screen,enemy,rect,'eyes')
                 display_kris(screen,rect)
             elif i <= 230:
@@ -135,11 +135,11 @@ def fin_combat():
                 display_enemy_frame(screen,enemy,rect,'looking')
                 display_kris(screen,rect)
             elif i <= 260:
-                Speaking(screen,rect,"* Everyone is different and I'd like you to give him a chance.",'Kris')
+                Speaking(screen,rect,"* Everyone is different and i'd like it if you gave him a chance.",'Kris')
                 display_enemy_frame(screen,enemy,rect,'looking')
                 display_kris(screen,rect)
             elif i <= 290:
-                Speaking(screen,rect,"* Okay... I let him go",'Kopa','look_yu')
+                Speaking(screen,rect,"* Okay... I'll let him go",'Kopa','look_yu')
                 display_enemy_frame(screen,enemy,rect,'look_yu')
                 display_kris(screen,rect)
             elif i > 290:
@@ -481,7 +481,7 @@ def enemy_turn(soul,state):
                     return False,True
             
             if player.info['current_hp'] <= 5 or enemy.info['hp'] <= 5:
-                if player.info['current_hp'] <= 0:
+                if not enemy.info['hp'] <= 5:
                     player.info['current_hp'] = 1
                 return True,True
 
@@ -504,6 +504,45 @@ def enemy_turn(soul,state):
             clock.tick(fps)
             pygame.display.update()
 
+def debut_combat(Emergency_Stop,overworld_lock):
+    soul = 'red'
+
+    Emergency_Stop,overworld_lock,info = player_turn()
+
+    if overworld_lock and not Emergency_Stop:
+        Emergency_Stop,overworld_lock = transition("* Do you think you're special or something ?")
+
+    if overworld_lock and not Emergency_Stop:
+        Emergency_Stop,overworld_lock = enemy_turn(soul,1)
+
+    if overworld_lock and not Emergency_Stop:
+        Emergency_Stop,overworld_lock,info = player_turn()
+
+    if overworld_lock and not Emergency_Stop:
+        Emergency_Stop,overworld_lock = transition("* Not bad, kid, prepare yourself")
+
+    if overworld_lock and not Emergency_Stop:
+        Emergency_Stop,overworld_lock = enemy_turn(soul,2)
+
+    if overworld_lock and not Emergency_Stop:
+        Emergency_Stop,overworld_lock,info = player_turn()
+
+    if overworld_lock and not Emergency_Stop:
+        Emergency_Stop,overworld_lock = transition("* Gosh human, you're hard to kill isn't it ?\nNow die.")
+
+    if overworld_lock and not Emergency_Stop:
+        soul = 'blue'
+        Emergency_Stop,overworld_lock = enemy_turn(soul,3)
+
+    if overworld_lock and not Emergency_Stop:
+        Emergency_Stop,overworld_lock = fin_combat()
+    
+    if Emergency_Stop and overworld_lock:
+        Emergency_Stop = False
+        Emergency_Stop,overworld_lock = fin_combat()
+
+    return Emergency_Stop,overworld_lock
+
 Emergency_Stop = False
 
 # Window Name and Icon
@@ -521,7 +560,7 @@ pygame.display.set_icon(ico)
 #      # au niveau 1 donc un ajout trop important de niveau peut donner un résultat illogique
 
 info = {}
-info["name"] = "Frisk"
+info["name"] = "Niko"
 info["xp"] = 0
 info["level"] = 1
 info["hp"] = hp_system[info["level"]]
@@ -548,68 +587,117 @@ name_lock = not Emergency_Stop
 cursor = 0
 txt = ''
 ind = 0
+enter = False
 while name_lock:
     screen.fill((0,0,20))
-    Emergency_Stop,name_lock,cursor,select,enter = name_ev(cursor)
+    Emergency_Stop,name_lock,cursor,select,enter = name_ev(cursor,enter)
+    if txt == '':
+        enter = False
     if enter:
-        Emergency_Stop = selection_name(screen,(width,height),txt,ind)
+        if not Emergency_Stop:
+            Emergency_Stop = selection_name(screen,(width,height),txt,ind)
         ind += 1
         if ind > 160:
             name_lock = False
     else:
         txt = name_pad(screen,(width,height),cursor,select)
+    
     clock.tick(fps)
     pygame.display.update()
 
-cube_box = boxfight(screen,width*0.2,height*0.3,(width*0.5,height*0.6))
-large_box = boxfight(screen,width*0.4,height*0.3,(width*0.5,height*0.6))
-dialogue_box = boxfight(screen,width*0.6,height*0.3,(width*0.5,height*0.6))
+# cube_box = boxfight(screen,width*0.2,height*0.3,(width*0.5,height*0.6))
+# large_box = boxfight(screen,width*0.4,height*0.3,(width*0.5,height*0.6))
+# dialogue_box = boxfight(screen,width*0.6,height*0.3,(width*0.5,height*0.6))
 
 overworld_lock = not Emergency_Stop
-soul = 'red'
-monster_combat = False
 enemy = Kopa()
+
+### OVERWORLD ###
+map = Map()
+
+combat1 = Debutcombat(pygame.Rect(5000,1885,10,600))
+combats = [combat1]
+
+item1 = Item(Butterscotch_Pie)
+items = [item1]
+
+perso = Personnage()
+map.set_position((0,0))
+camera = Camera(5700,2975)
+perso.set_position((900,2350))
+
+new_item = False
+txt = []
+t = 0
+
+stop = False
+
+### ###
+
 while overworld_lock:
     screen.fill((0,0,20))
     if window_quit():
         overworld_lock = False
         Emergency_Stop = True
     else:
-        Emergency_Stop,overworld_lock,info = player_turn()
+        screen.fill((0,0,0))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                overworld = False
+                Emergency_Stop = False
+        if not stop :
+            deplacement(perso)
+            anim_perso(perso,frame)
+        camera.update(perso)
 
-        if overworld_lock and not Emergency_Stop:
-            Emergency_Stop,overworld_lock = transition("* Do you think thats you are special or something ?")
+        draw_map(screen, map.img, camera)
 
-        if overworld_lock and not Emergency_Stop:
-            Emergency_Stop,overworld_lock = enemy_turn(soul,1)
+        for elt in map_collisions:
+            elt.collisions(perso)
+            pygame.draw.rect(map.img,(255,0,0),elt.rect)
 
-        if overworld_lock and not Emergency_Stop:
-            Emergency_Stop,overworld_lock,info = player_turn()
+        if items != []:
+            for item in items:
+                if item.collisions(perso):
+                    player_inventory.append(item.item)
+                    txt = [item.item]
+                    items.pop(0)
+                    map.img = pygame.image.load("sprites/maps/Fullmap.png")
+                    map.img = pygame.transform.scale(map.img, (5812, 3070))
+                    new_item = True
+                else:
+                    draw_item(map.img,item)
 
-        if overworld_lock and not Emergency_Stop:
-            Emergency_Stop,overworld_lock = transition("* Not bad, kid, prepare yourself")
+        if new_item:
+            display_text_item_o(screen,txt[0])
+            t += 1
+            if t > 80:
+                new_item = 0
+                t = 0
 
-        if overworld_lock and not Emergency_Stop:
-            Emergency_Stop,overworld_lock = enemy_turn(soul,2)
-
-        if overworld_lock and not Emergency_Stop:
-            Emergency_Stop,overworld_lock,info = player_turn()
-
-        if overworld_lock and not Emergency_Stop:
-            Emergency_Stop,overworld_lock = transition("* Gosh human, your hard to kill isn't it ?\nNow die.")
-
-        if overworld_lock and not Emergency_Stop:
-            soul = 'blue'
-            Emergency_Stop,overworld_lock = enemy_turn(soul,3)
-
-        if overworld_lock and not Emergency_Stop:
-            Emergency_Stop,overworld_lock = fin_combat()
+        draw_player_o(screen, perso,camera)
         
-        if Emergency_Stop and overworld_lock:
-            Emergency_Stop = False
-            Emergency_Stop,overworld_lock = fin_combat()
+        
+        for combat in combats:
+            if combat.collisions(perso):
+                stop = True
+                t += 1
+                if t < 10:
+                    screen.fill("black")
+                elif t < 20:
+                    screen.fill((0,0,50))
+                elif t < 30:
+                    screen.fill("black")
+                elif t < 40:
+                    screen.fill((0,0,50))
+                elif t < 50:
+                    Emergency_Stop,overworld_lock = debut_combat(Emergency_Stop,overworld_lock)
+                    overworld_lock = False
+            pygame.draw.rect(map.img,(0,0,255),combat.rect)
 
-        overworld_lock = False
+        basics(screen,[clock,perso.rect,item.rect])    
+        pygame.display.update()
+        clock.tick(60)
         
 end_lock = not Emergency_Stop
 slt = 0

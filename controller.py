@@ -18,9 +18,8 @@ def waiting_room():
 
 Alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 stock_ancient = ""
-enter = False
-def name_ev(cursor):
-    global stock_ancient,enter
+def name_ev(cursor,enter):
+    global stock_ancient
     if cursor == 'Erase':
         cursor = stock_ancient
     for event in pygame.event.get(eventtype=[pygame.KEYDOWN,pygame.QUIT]):
@@ -42,8 +41,7 @@ def name_ev(cursor):
             return False,True,'Erase',True,enter
 
         if event.key == pygame.K_RETURN:
-            enter = True
-            return False,True,cursor,False,enter
+            return False,True,cursor,False,True
 
     return False,True,cursor,False,enter
         
@@ -226,3 +224,38 @@ def fight_button_pressed():
             return True,True
     
     return True,False
+
+### OVERWORLD ###
+
+class Item:
+    def __init__(self,item):
+        self.img = pygame.image.load("sprites/ui/pie.png")
+        self.img = pygame.transform.scale_by(self.img,2)
+        self.rect = self.img.get_rect(center = (1100,800))
+        self.item = item
+
+    def collisions(self,perso):
+        if self.rect.colliderect(perso.rect):
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_z]:
+                    return True
+        return False
+
+def deplacement(personnage):
+    pressed =  pygame.key.get_pressed()
+    if personnage.velocity[0] == 0:
+        if pressed[pygame.K_UP]:
+            personnage.velocity[1] = -1
+        elif pressed[pygame.K_DOWN]:
+            personnage.velocity[1] = 1
+        else:
+            personnage.velocity[1] = 0
+
+    if personnage.velocity[1] == 0:
+        if pressed[pygame.K_RIGHT]:
+            personnage.velocity[0] = 1
+        elif pressed[pygame.K_LEFT]:
+            personnage.velocity[0] = -1
+        else:
+            personnage.velocity[0] = 0
+    personnage.deplacer()
