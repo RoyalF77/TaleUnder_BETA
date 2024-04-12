@@ -9,27 +9,51 @@ def window_quit():
     return False
 
 def waiting_room():
-    pressed = pygame.key.get_pressed()
-    if pressed[pygame.K_z]:
-        return False
-    return True
+    for event in pygame.event.get(eventtype=[pygame.KEYDOWN,pygame.QUIT]):
+        if event.type == pygame.QUIT :
+            return False,True
+        if event.key == pygame.K_z:
+            return False,False
+    return True,False
 
-def name_ev():
-    pressed = pygame.key.get_pressed()
-    if pressed[pygame.K_SPACE]:
-        return False
-    return True
+Alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+stock_ancient = ""
+def name_ev(cursor,enter):
+    global stock_ancient
+    if cursor == 'Erase':
+        cursor = stock_ancient
+    for event in pygame.event.get(eventtype=[pygame.KEYDOWN,pygame.QUIT]):
+        if event.type == pygame.QUIT :
+            return True, False, cursor,False,enter
+        
+        if event.key == pygame.K_LEFT and cursor -1 >= 0:
+            cursor -= 1
+        elif event.key == pygame.K_RIGHT and cursor +1 < len(Alphabet):
+            cursor += 1
+        elif event.key == pygame.K_UP and cursor - 7 >= 0:
+            cursor -= 7
+        elif event.key == pygame.K_DOWN and cursor +7 < len(Alphabet):
+            cursor += 7
+        if event.key == pygame.K_z:
+            return False,True,cursor,True,enter
+        elif event.key == pygame.K_BACKSPACE:
+            stock_ancient = cursor
+            return False,True,'Erase',True,enter
+
+        if event.key == pygame.K_RETURN:
+            return False,True,cursor,False,True
+
+    return False,True,cursor,False,enter
+        
 
 def modif_soul(state):
     pressed = pygame.key.get_pressed()
 
-    if pressed[pygame.K_z]:
+    if pressed[pygame.K_F1]:
         return "blue"
-    if pressed[pygame.K_a]:
+    if pressed[pygame.K_F2]:
         return "red"
     return state
-
-
 
 def eturn_events(soul_mode,player,fightbox):
 
@@ -65,7 +89,7 @@ def eturn_events(soul_mode,player,fightbox):
         if ybottom >= fightbox.bottom-5:
             blue_lock = True
         # Coeur limite haut
-        if ytop <= fightbox.top+(fightbox.bottom - fightbox.top)*0.1:
+        if ytop <= fightbox.top+(fightbox.bottom - fightbox.top)*0.01:
             blue_lock = False
         # Saut
         if pressed[pygame.K_UP] and blue_lock:
@@ -79,29 +103,10 @@ def eturn_events(soul_mode,player,fightbox):
     
     return True
 
-# def pturn_events(tab):
-#     pressed = pygame.key.get_pressed()
-#     if tab[0]:
-#         if pressed[pygame.K_RIGHT]:
-#             tab = [0,1,0,0]
-#     elif tab[1]:
-#         if pressed[pygame.K_RIGHT]:
-#             tab = [0,0,1,0]
-#         elif pressed[pygame.K_LEFT]:
-#             tab = [1,0,0,0]
-#     elif tab[2]:
-#         if pressed[pygame.K_RIGHT]:
-#             tab = [0,0,0,1]
-#         elif pressed[pygame.K_LEFT]:
-#             tab = [0,1,0,0]
-#     elif tab[3]:
-#         if pressed[pygame.K_LEFT]:
-#             tab = [0,0,1,0]
-#     return True, tab
-
 def pturn_events(tab,player,enemy):
-    global menu_pos, elements
+    global menu_pos,cursor, elements
     menu_pos = 0
+    cursor = 0
     elements = 3
 
     selected = None
@@ -138,17 +143,17 @@ def pturn_events(tab,player,enemy):
     if selected != 'f':
         if selected == 'a':
             lan = len(enemy.act)
-            if elements - lan > -3:
+            if elements - lan > 3:
                 elements = 3 -(elements - lan)
                 
         if selected == 'i':
             lan = len(player.inv)
-            if elements - lan > -3:
+            if elements - lan > 3:
                 elements = 3 -(elements - lan)
                 
         if selected == 'm':
             lan = len(enemy.mercy)
-            if elements - lan > -3:
+            if elements - lan > 3:
                 elements = 3 -(elements - lan)
     else:
         elements = 1
@@ -157,42 +162,100 @@ def pturn_events(tab,player,enemy):
 
 menu_pos = 0
 elements = 0
+cursor = 0
 def in_menu(tab,selected,box,player,enemy):
-    global menu_pos,elements
+    global cursor,menu_pos,elements
     x,y = box.topleft
     x+= 50
     y+= 38
     coord = (x,y)
     lan = 0
+    fonc = ["fight"]
     if selected == 'a':
         lan = len(enemy.act)
+        fonc = enemy.act
     if selected == 'i':
         lan = len(player.inv)
+        fonc = player.inv
     if selected == 'm':
         lan = len(enemy.mercy)
+        fonc = enemy.mercy
 
     for event in pygame.event.get(eventtype=[pygame.KEYDOWN,pygame.QUIT]):
         if event.type == pygame.QUIT :
-            return False,tab,selected,coord,elements
+            return False,tab,selected,coord,elements,False,fonc[cursor]
         if event.key == pygame.K_ESCAPE:
-            return True,[1,0,0,0],None,coord,elements
+            return True,[1,0,0,0],None,coord,elements,False,fonc[cursor]
         
         if event.key == pygame.K_UP :
             if menu_pos > 0:
                 menu_pos -= 1
+                cursor -= 1
             elif elements>3:
                 coord = (x,y+(80*menu_pos))
                 elements-=1
-                return True,tab,selected,coord,elements
+                cursor -= 1
+                return True,tab,selected,coord,elements,False,fonc[cursor]
             
         if event.key == pygame.K_DOWN:
             if menu_pos < elements-1 and menu_pos <2:
                 menu_pos += 1
+                cursor += 1
             elif elements < lan:
                 coord = (x,y+(80*menu_pos))
                 elements+=1
-                return True,tab,selected,coord,elements
-    
+                cursor += 1
+                return True,tab,selected,coord,elements,False,fonc[cursor]
+            
+        if event.key == pygame.K_z:
+            if selected == 'i':
+                return True,tab,selected,coord,elements,True,cursor
+            return True,tab,selected,coord,elements,True,fonc[cursor]
+        
     coord = (x,y+(80*menu_pos))
+
+    return True,tab,selected,coord,elements,False,fonc[cursor]
+
+def fight_button_pressed():
+    for event in pygame.event.get(eventtype=[pygame.KEYDOWN,pygame.QUIT]):
+        if event.type == pygame.QUIT :
+            return False,False
+        if event.key == pygame.K_z:
+            return True,True
     
-    return True,tab,selected,coord,elements
+    return True,False
+
+### OVERWORLD ###
+
+class Item:
+    def __init__(self,item):
+        self.img = pygame.image.load("sprites/ui/pie.png")
+        self.img = pygame.transform.scale_by(self.img,2)
+        self.rect = self.img.get_rect(center = (1100,800))
+        self.item = item
+
+    def collisions(self,perso):
+        if self.rect.colliderect(perso.rect):
+            pressed = pygame.key.get_pressed()
+            if pressed[pygame.K_z]:
+                    return True
+        return False
+
+def deplacement(personnage):
+    pressed =  pygame.key.get_pressed()
+    if personnage.velocity[0] == 0:
+        if pressed[pygame.K_UP]:
+            personnage.velocity[1] = -1
+        elif pressed[pygame.K_DOWN]:
+            personnage.velocity[1] = 1
+        else:
+            personnage.velocity[1] = 0
+
+    if personnage.velocity[1] == 0:
+        if pressed[pygame.K_RIGHT]:
+            personnage.velocity[0] = 1
+        elif pressed[pygame.K_LEFT]:
+            personnage.velocity[0] = -1
+        else:
+            personnage.velocity[0] = 0
+    personnage.deplacer()
